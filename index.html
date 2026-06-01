@@ -1,260 +1,319 @@
 <!DOCTYPE html>
-<!-- saved from url=(0064)file:///C:/Users/NicolasCabot/Downloads/portfolio-tracker_3.html -->
-<html lang="es"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-
+<html lang="es">
+<head>
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Cocos · Portfolio Tracker</title>
-<link href="./index_files/css2" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0a0e1a; --surface: #111827; --surface2: #1a2235; --border: #1f2d45;
-    --accent: #00d4aa; --accent2: #3b82f6; --red: #f43f5e; --green: #10b981;
-    --text: #e2e8f0; --muted: #64748b; --gold: #f59e0b;
+    --bg:#0a0e1a;--surface:#111827;--surface2:#1a2235;--border:#1f2d45;
+    --accent:#00d4aa;--accent2:#3b82f6;--red:#f43f5e;--green:#10b981;
+    --text:#e2e8f0;--muted:#64748b;--gold:#f59e0b;
   }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; min-height: 100vh; overflow-x: hidden; }
-  body::before {
-    content: ''; position: fixed; inset: 0;
-    background-image: linear-gradient(rgba(0,212,170,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,212,170,0.03) 1px, transparent 1px);
-    background-size: 48px 48px; pointer-events: none; z-index: 0;
-  }
-  .container { max-width: 1100px; margin: 0 auto; padding: 2rem 1.5rem; position: relative; z-index: 1; }
-  header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border); }
-  .logo { font-family: 'Space Mono', monospace; font-size: 1.1rem; color: var(--accent); letter-spacing: -0.02em; }
-  .logo span { color: var(--muted); }
-  .header-right { display: flex; align-items: center; gap: 1rem; }
-  .header-date { font-family: 'Space Mono', monospace; font-size: 0.75rem; color: var(--muted); }
-  .sync-indicator { display: flex; align-items: center; gap: 0.4rem; font-family: 'Space Mono', monospace; font-size: 0.7rem; color: var(--muted); }
-  .sync-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--muted); transition: background 0.3s; }
-  .sync-dot.ok      { background: var(--green); box-shadow: 0 0 5px var(--green); }
-  .sync-dot.loading { background: var(--gold);  box-shadow: 0 0 5px var(--gold); animation: pulse 1s infinite; }
-  .sync-dot.error   { background: var(--red);   box-shadow: 0 0 5px var(--red); }
-  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden;}
+  body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(0,212,170,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,212,170,0.03) 1px,transparent 1px);background-size:48px 48px;pointer-events:none;z-index:0;}
 
-  .summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
-  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem 1.5rem; position: relative; overflow: hidden; transition: border-color 0.2s; }
-  .card:hover { border-color: var(--accent); }
-  .card::after { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--accent), transparent); }
-  .card.blue::after { background: linear-gradient(90deg, var(--accent2), transparent); }
-  .card.gold::after { background: linear-gradient(90deg, var(--gold), transparent); }
-  .card-label { font-size: 0.7rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 0.5rem; }
-  .card-value { font-family: 'Space Mono', monospace; font-size: 1.4rem; font-weight: 700; color: var(--text); line-height: 1.1; }
-  .card-sub { font-family: 'Space Mono', monospace; font-size: 0.75rem; color: var(--muted); margin-top: 0.3rem; }
+  /* ── Header ── */
+  header{position:sticky;top:0;z-index:50;background:rgba(10,14,26,0.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:52px;}
+  .logo{font-family:'Space Mono',monospace;font-size:0.85rem;color:var(--accent);letter-spacing:-0.02em;white-space:nowrap;}
+  .logo span{color:var(--muted);}
+  nav{display:flex;align-items:center;gap:0.25rem;}
+  .nav-btn{background:none;border:none;color:var(--muted);font-family:'DM Sans',sans-serif;font-size:0.78rem;font-weight:500;padding:0.35rem 0.7rem;border-radius:6px;cursor:pointer;transition:color 0.15s,background 0.15s;white-space:nowrap;}
+  .nav-btn:hover{color:var(--text);background:rgba(255,255,255,0.06);}
+  .header-right{display:flex;align-items:center;gap:0.75rem;}
+  .currency-toggle{display:flex;align-items:center;background:var(--surface2);border:1px solid var(--border);border-radius:8px;overflow:hidden;}
+  .cur-btn{background:none;border:none;color:var(--muted);font-family:'Space Mono',monospace;font-size:0.7rem;font-weight:700;padding:0.3rem 0.7rem;cursor:pointer;transition:background 0.15s,color 0.15s;}
+  .cur-btn.active{background:var(--accent);color:#0a0e1a;}
+  .sync-indicator{display:flex;align-items:center;gap:0.4rem;font-family:'Space Mono',monospace;font-size:0.65rem;color:var(--muted);}
+  .sync-dot{width:6px;height:6px;border-radius:50%;background:var(--muted);transition:background 0.3s;}
+  .sync-dot.ok{background:var(--green);box-shadow:0 0 4px var(--green);}
+  .sync-dot.loading{background:var(--gold);animation:pulse 1s infinite;}
+  .sync-dot.error{background:var(--red);}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
 
-  .var-chips { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.5rem; }
-  .var-chip { display: flex; flex-direction: column; align-items: center; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 0.5rem 0.9rem; min-width: 90px; }
-  .var-chip-label { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin-bottom: 0.2rem; }
-  .var-chip-val { font-family: 'Space Mono', monospace; font-size: 0.85rem; font-weight: 700; }
+  .container{max-width:1100px;margin:0 auto;padding:1.5rem;position:relative;z-index:1;}
 
-  .section { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 1.5rem; overflow: hidden; }
-  .section-header { display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.5rem; border-bottom: 1px solid var(--border); cursor: pointer; user-select: none; }
-  .section-title { font-family: 'Space Mono', monospace; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.05em; display: flex; align-items: center; gap: 0.6rem; }
-  .section-title .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 6px var(--accent); }
-  .section-title .dot.blue { background: var(--accent2); box-shadow: 0 0 6px var(--accent2); }
-  .section-title .dot.red  { background: var(--red);     box-shadow: 0 0 6px var(--red); }
-  .section-title .dot.gold { background: var(--gold);    box-shadow: 0 0 6px var(--gold); }
-  .toggle-icon { color: var(--muted); font-size: 0.8rem; }
-  .section-body { padding: 1.5rem; }
+  /* ── Sections ── */
+  .section{background:var(--surface);border:1px solid var(--border);border-radius:12px;margin-bottom:1.25rem;overflow:hidden;}
+  .section-header{display:flex;align-items:center;justify-content:space-between;padding:0.9rem 1.25rem;border-bottom:1px solid var(--border);cursor:pointer;user-select:none;}
+  .section-title{font-family:'Space Mono',monospace;font-size:0.75rem;font-weight:700;letter-spacing:0.05em;display:flex;align-items:center;gap:0.6rem;}
+  .dot{width:6px;height:6px;border-radius:50%;background:var(--accent);box-shadow:0 0 5px var(--accent);}
+  .dot.blue{background:var(--accent2);box-shadow:0 0 5px var(--accent2);}
+  .dot.red{background:var(--red);box-shadow:0 0 5px var(--red);}
+  .dot.gold{background:var(--gold);box-shadow:0 0 5px var(--gold);}
+  .toggle-icon{color:var(--muted);font-size:0.75rem;}
+  .section-body{padding:1.25rem;}
+  .section-body.collapsed{display:none;}
 
-  .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; align-items: end; }
-  .field { display: flex; flex-direction: column; gap: 0.4rem; }
-  label { font-size: 0.7rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
-  input, select { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; color: var(--text); font-family: 'Space Mono', monospace; font-size: 0.85rem; padding: 0.6rem 0.8rem; outline: none; transition: border-color 0.2s; width: 100%; }
-  input:focus, select:focus { border-color: var(--accent); }
-  input::placeholder { color: var(--muted); }
-  .required-tag { font-size: 0.6rem; color: var(--red); font-weight: 600; }
+  /* ── Summary cards ── */
+  .summary-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:0.875rem;margin-bottom:0;}
+  .card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:1rem 1.25rem;position:relative;overflow:hidden;}
+  .card::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent),transparent);}
+  .card.blue::after{background:linear-gradient(90deg,var(--accent2),transparent);}
+  .card.gold::after{background:linear-gradient(90deg,var(--gold),transparent);}
+  .card-label{font-size:0.65rem;font-weight:500;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);margin-bottom:0.4rem;}
+  .card-value{font-family:'Space Mono',monospace;font-size:1.25rem;font-weight:700;line-height:1.1;}
+  .card-sub{font-family:'Space Mono',monospace;font-size:0.7rem;color:var(--muted);margin-top:0.25rem;}
 
-  .btn { background: var(--accent); color: #0a0e1a; border: none; border-radius: 8px; font-family: 'Space Mono', monospace; font-size: 0.75rem; font-weight: 700; padding: 0.65rem 1.25rem; cursor: pointer; letter-spacing: 0.05em; transition: opacity 0.15s, transform 0.1s; white-space: nowrap; }
-  .btn:hover  { opacity: 0.85; transform: translateY(-1px); }
-  .btn:active { transform: translateY(0); }
-  .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-  .btn.secondary { background: var(--surface2); border: 1px solid var(--border); color: var(--text); }
-  .btn.secondary:hover { border-color: var(--accent); }
-  .btn.gold-btn { background: var(--gold); color: #0a0e1a; }
+  /* ── Var chips ── */
+  .var-chips{display:flex;flex-wrap:wrap;gap:0.5rem;margin-bottom:1.25rem;}
+  .var-chip{display:flex;flex-direction:column;align-items:center;background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:0.45rem 0.8rem;min-width:82px;}
+  .var-chip-label{font-size:0.58rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin-bottom:0.15rem;}
+  .var-chip-val{font-family:'Space Mono',monospace;font-size:0.8rem;font-weight:700;}
 
-  .hint { font-size: 0.72rem; color: var(--muted); margin-top: 0.5rem; padding: 0.5rem 0.75rem; background: rgba(0,212,170,0.04); border-left: 2px solid var(--accent); border-radius: 0 4px 4px 0; }
+  /* ── Forms ── */
+  .form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:0.875rem;align-items:end;}
+  .field{display:flex;flex-direction:column;gap:0.35rem;}
+  label{font-size:0.65rem;font-weight:500;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);}
+  input,select{background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Space Mono',monospace;font-size:0.82rem;padding:0.55rem 0.75rem;outline:none;transition:border-color 0.2s;width:100%;}
+  input:focus,select:focus{border-color:var(--accent);}
+  input::placeholder{color:var(--muted);}
+  .req{font-size:0.58rem;color:var(--red);font-weight:600;}
+  .hint{font-size:0.7rem;color:var(--muted);margin-top:0.5rem;padding:0.45rem 0.7rem;background:rgba(0,212,170,0.04);border-left:2px solid var(--accent);border-radius:0 4px 4px 0;}
 
-  .table-wrap { overflow-x: auto; }
-  table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
-  thead th { font-family: 'Space Mono', monospace; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); padding: 0.6rem 0.8rem; text-align: left; border-bottom: 1px solid var(--border); }
-  tbody tr { border-bottom: 1px solid rgba(31,45,69,0.5); transition: background 0.15s; }
-  tbody tr:hover { background: rgba(0,212,170,0.04); }
-  tbody td { padding: 0.65rem 0.8rem; font-family: 'Space Mono', monospace; font-size: 0.78rem; vertical-align: middle; }
-  .icon-btn { background: none; border: none; cursor: pointer; font-size: 0.85rem; padding: 0.25rem 0.4rem; border-radius: 4px; transition: color 0.15s, background 0.15s; color: var(--muted); }
-  .icon-btn:hover.edit { color: var(--accent2); background: rgba(59,130,246,0.1); }
-  .icon-btn:hover.del  { color: var(--red);     background: rgba(244,63,94,0.1); }
-  .up { color: var(--green); } .down { color: var(--red); } .neutral { color: var(--muted); }
-  .empty { text-align: center; color: var(--muted); font-size: 0.8rem; padding: 2rem; font-family: 'Space Mono', monospace; }
+  /* ── Buttons ── */
+  .btn{background:var(--accent);color:#0a0e1a;border:none;border-radius:8px;font-family:'Space Mono',monospace;font-size:0.72rem;font-weight:700;padding:0.6rem 1.1rem;cursor:pointer;letter-spacing:0.05em;transition:opacity 0.15s,transform 0.1s;white-space:nowrap;}
+  .btn:hover{opacity:0.85;transform:translateY(-1px);}
+  .btn:active{transform:translateY(0);}
+  .btn:disabled{opacity:0.5;cursor:not-allowed;transform:none;}
+  .btn.secondary{background:var(--surface2);border:1px solid var(--border);color:var(--text);}
+  .btn.secondary:hover{border-color:var(--accent);}
+  .btn.gold-btn{background:var(--gold);color:#0a0e1a;}
+  .btn.outline{background:transparent;border:1px solid var(--accent);color:var(--accent);}
 
-  .period-builder { display: grid; grid-template-columns: 1fr 1fr auto auto; gap: 0.75rem; align-items: end; margin-bottom: 1.25rem; }
-  .custom-result { background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; padding: 1rem 1.25rem; margin-top: 1rem; display: none; }
-  .custom-result.visible { display: block; }
-  .custom-result-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 0.75rem; margin-top: 0.75rem; }
-  .cr-item { display: flex; flex-direction: column; gap: 0.2rem; }
-  .cr-label { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
-  .cr-val { font-family: 'Space Mono', monospace; font-size: 0.9rem; font-weight: 700; }
+  /* ── Tables ── */
+  .table-wrap{overflow-x:auto;}
+  table{width:100%;border-collapse:collapse;font-size:0.78rem;}
+  thead th{font-family:'Space Mono',monospace;font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);padding:0.55rem 0.75rem;text-align:left;border-bottom:1px solid var(--border);}
+  tbody tr{border-bottom:1px solid rgba(31,45,69,0.5);transition:background 0.15s;}
+  tbody tr:hover{background:rgba(0,212,170,0.04);}
+  tbody td{padding:0.6rem 0.75rem;font-family:'Space Mono',monospace;font-size:0.74rem;vertical-align:middle;}
+  .icon-btn{background:none;border:none;cursor:pointer;font-size:0.82rem;padding:0.2rem 0.35rem;border-radius:4px;color:var(--muted);transition:color 0.15s,background 0.15s;}
+  .icon-btn:hover.edit{color:var(--accent2);background:rgba(59,130,246,0.1);}
+  .icon-btn:hover.del{color:var(--red);background:rgba(244,63,94,0.1);}
+  .up{color:var(--green);}.down{color:var(--red);}.neutral{color:var(--muted);}
+  .empty{text-align:center;color:var(--muted);font-size:0.78rem;padding:2rem;font-family:'Space Mono',monospace;}
 
-  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); z-index: 200; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
-  .modal-overlay.open { opacity: 1; pointer-events: all; }
-  .modal { background: var(--surface); border: 1px solid var(--accent); border-radius: 14px; padding: 1.75rem; width: 90%; max-width: 520px; position: relative; transform: translateY(16px); transition: transform 0.2s; box-shadow: 0 0 40px rgba(0,212,170,0.12); }
-  .modal-overlay.open .modal { transform: translateY(0); }
-  .modal-title { font-family: 'Space Mono', monospace; font-size: 0.85rem; font-weight: 700; letter-spacing: 0.05em; color: var(--accent); margin-bottom: 1.25rem; }
-  .modal-close { position: absolute; top: 1rem; right: 1rem; background: none; border: none; color: var(--muted); font-size: 1.1rem; cursor: pointer; padding: 0.2rem 0.4rem; border-radius: 4px; transition: color 0.15s; }
-  .modal-close:hover { color: var(--text); }
-  .modal-actions { display: flex; gap: 0.75rem; margin-top: 1.25rem; justify-content: flex-end; }
+  /* ── Period / Chart ── */
+  .period-builder{display:grid;grid-template-columns:1fr 1fr auto auto;gap:0.75rem;align-items:end;margin-bottom:1rem;}
+  .chart-container{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:1.25rem;margin-top:1rem;display:none;}
+  .chart-container.visible{display:block;}
+  .chart-meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:0.6rem;margin-bottom:1rem;}
+  .meta-item{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:0.6rem 0.875rem;}
+  .meta-label{font-size:0.58rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin-bottom:0.2rem;}
+  .meta-val{font-family:'Space Mono',monospace;font-size:0.85rem;font-weight:700;}
+  .mode-toggle{display:flex;gap:0.4rem;margin-bottom:1rem;}
+  .mode-btn{background:var(--surface);border:1px solid var(--border);color:var(--muted);font-family:'Space Mono',monospace;font-size:0.65rem;font-weight:700;padding:0.35rem 0.8rem;border-radius:6px;cursor:pointer;transition:all 0.15s;letter-spacing:0.04em;}
+  .mode-btn.active{background:var(--accent);border-color:var(--accent);color:#0a0e1a;}
 
-  #toast { position: fixed; bottom: 1.5rem; right: 1.5rem; background: var(--surface); border: 1px solid var(--accent); color: var(--accent); font-family: 'Space Mono', monospace; font-size: 0.75rem; padding: 0.7rem 1.1rem; border-radius: 8px; opacity: 0; transform: translateY(10px); transition: opacity 0.3s, transform 0.3s; pointer-events: none; z-index: 300; }
-  #toast.show { opacity: 1; transform: translateY(0); }
-  #toast.err { border-color: var(--red); color: var(--red); }
+  /* ── Modal ── */
+  .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(4px);z-index:200;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.2s;}
+  .modal-overlay.open{opacity:1;pointer-events:all;}
+  .modal{background:var(--surface);border:1px solid var(--accent);border-radius:14px;padding:1.5rem;width:90%;max-width:500px;position:relative;transform:translateY(16px);transition:transform 0.2s;box-shadow:0 0 40px rgba(0,212,170,0.1);}
+  .modal-overlay.open .modal{transform:translateY(0);}
+  .modal-title{font-family:'Space Mono',monospace;font-size:0.8rem;font-weight:700;color:var(--accent);margin-bottom:1.1rem;}
+  .modal-close{position:absolute;top:0.9rem;right:0.9rem;background:none;border:none;color:var(--muted);font-size:1rem;cursor:pointer;padding:0.2rem 0.4rem;border-radius:4px;}
+  .modal-close:hover{color:var(--text);}
+  .modal-actions{display:flex;gap:0.6rem;margin-top:1.1rem;justify-content:flex-end;}
 
-  .disclaimer { font-size: 0.65rem; color: var(--muted); margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border); line-height: 1.6; text-align: center; }
+  /* ── Loading ── */
+  #loadingOverlay{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:500;transition:opacity 0.4s;}
+  #loadingOverlay.hidden{opacity:0;pointer-events:none;}
+  .loading-logo{font-family:'Space Mono',monospace;font-size:1.1rem;color:var(--accent);margin-bottom:1rem;}
+  .loading-bar{width:180px;height:2px;background:var(--border);border-radius:2px;overflow:hidden;}
+  .loading-bar-inner{height:100%;width:40%;background:var(--accent);border-radius:2px;animation:slide 1.2s ease-in-out infinite;}
+  @keyframes slide{0%{transform:translateX(-100%)}100%{transform:translateX(350%)}}
+  .loading-msg{font-family:'Space Mono',monospace;font-size:0.65rem;color:var(--muted);margin-top:0.6rem;}
 
-  /* Loading overlay */
-  #loadingOverlay { position: fixed; inset: 0; background: var(--bg); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 500; transition: opacity 0.4s; }
-  #loadingOverlay.hidden { opacity: 0; pointer-events: none; }
-  .loading-logo { font-family: 'Space Mono', monospace; font-size: 1.2rem; color: var(--accent); margin-bottom: 1rem; }
-  .loading-bar { width: 200px; height: 2px; background: var(--border); border-radius: 2px; overflow: hidden; }
-  .loading-bar-inner { height: 100%; width: 40%; background: var(--accent); border-radius: 2px; animation: slide 1.2s ease-in-out infinite; }
-  @keyframes slide { 0%{transform:translateX(-100%)} 100%{transform:translateX(350%)} }
-  .loading-msg { font-family: 'Space Mono', monospace; font-size: 0.7rem; color: var(--muted); margin-top: 0.75rem; }
+  /* ── Toast ── */
+  #toast{position:fixed;bottom:1.25rem;right:1.25rem;background:var(--surface);border:1px solid var(--accent);color:var(--accent);font-family:'Space Mono',monospace;font-size:0.72rem;padding:0.6rem 1rem;border-radius:8px;opacity:0;transform:translateY(8px);transition:opacity 0.3s,transform 0.3s;pointer-events:none;z-index:300;}
+  #toast.show{opacity:1;transform:translateY(0);}
+  #toast.err{border-color:var(--red);color:var(--red);}
 
-  @media (max-width: 600px) {
-    .summary-grid { grid-template-columns: 1fr 1fr; }
-    .form-grid    { grid-template-columns: 1fr; }
-    .period-builder { grid-template-columns: 1fr 1fr; }
+  .disclaimer{font-size:0.62rem;color:var(--muted);margin-top:1.5rem;padding-top:1.25rem;border-top:1px solid var(--border);line-height:1.6;text-align:center;}
+
+  @media(max-width:700px){
+    header{padding:0 1rem;}
+    nav .nav-btn{display:none;}
+    .form-grid{grid-template-columns:1fr;}
+    .period-builder{grid-template-columns:1fr 1fr;}
+    .summary-grid{grid-template-columns:1fr 1fr;}
   }
 </style>
 </head>
 <body>
 
-<!-- Loading screen -->
-<div id="loadingOverlay" class="hidden">
+<div id="loadingOverlay">
   <div class="loading-logo">COCOS // TRACKER</div>
   <div class="loading-bar"><div class="loading-bar-inner"></div></div>
   <div class="loading-msg">Conectando con la base de datos...</div>
 </div>
 
-<div class="container">
-  <header>
-    <div class="logo">COCOS <span>//</span> PORTFOLIO TRACKER</div>
-    <div class="header-right">
-      <div class="sync-indicator">
-        <div class="sync-dot ok" id="syncDot"></div>
-        <span id="syncLabel">Sincronizado</span>
-      </div>
-      <div class="header-date" id="headerDate">lunes, 1 de junio de 2026</div>
+<!-- ── Header ── -->
+<header>
+  <div class="logo">COCOS <span>//</span> TRACKER</div>
+  <nav>
+    <button class="nav-btn" onclick="scrollTo('secResumen')">Resumen</button>
+    <button class="nav-btn" onclick="scrollTo('secCartera')">Cartera</button>
+    <button class="nav-btn" onclick="scrollTo('secTransf')">Transferencias</button>
+    <button class="nav-btn" onclick="scrollTo('secHistorico')">Histórico</button>
+    <button class="nav-btn" onclick="scrollTo('secVariaciones')">Variaciones</button>
+  </nav>
+  <div class="header-right">
+    <div class="currency-toggle">
+      <button class="cur-btn active" id="btnARS" onclick="setCurrency('ars')">ARS</button>
+      <button class="cur-btn" id="btnUSD" onclick="setCurrency('usd')">USD</button>
     </div>
-  </header>
+    <div class="sync-indicator">
+      <div class="sync-dot" id="syncDot"></div>
+      <span id="syncLabel">—</span>
+    </div>
+  </div>
+</header>
 
-  <div class="summary-grid">
-    <div class="card">
-      <div class="card-label">Valor actual · ARS</div>
-      <div class="card-value" id="summARS">—</div>
-      <div class="card-sub" id="summARSdate">sin datos</div>
+<div class="container">
+
+  <!-- ── 0. Resumen ── -->
+  <div class="section" id="secResumen">
+    <div class="section-header" onclick="toggleSec('bodyResumen','icoResumen')">
+      <div class="section-title"><span class="dot"></span> Resumen</div>
+      <span class="toggle-icon" id="icoResumen">▼</span>
     </div>
-    <div class="card blue">
-      <div class="card-label">Valor actual · USD</div>
-      <div class="card-value" id="summUSD">—</div>
-      <div class="card-sub" id="summUSDdate">sin datos</div>
-    </div>
-    <div class="card gold">
-      <div class="card-label">Rendimiento neto · ARS</div>
-      <div class="card-value" id="summRetARS">—</div>
-      <div class="card-sub">excl. transferencias</div>
-    </div>
-    <div class="card gold">
-      <div class="card-label">Rendimiento neto · USD</div>
-      <div class="card-value" id="summRetUSD">—</div>
-      <div class="card-sub">excl. transferencias</div>
+    <div class="section-body" id="bodyResumen">
+      <div class="summary-grid">
+        <div class="card">
+          <div class="card-label">Valor actual</div>
+          <div class="card-value" id="summVal">—</div>
+          <div class="card-sub" id="summValDate">sin datos</div>
+        </div>
+        <div class="card gold">
+          <div class="card-label">Rendimiento neto total</div>
+          <div class="card-value" id="summRend">—</div>
+          <div class="card-sub">excl. transferencias</div>
+        </div>
+        <div class="card gold">
+          <div class="card-label">Rendimiento neto %</div>
+          <div class="card-value" id="summRendPct">—</div>
+          <div class="card-sub">desde inicio</div>
+        </div>
+        <div class="card blue">
+          <div class="card-label">Transferencias netas</div>
+          <div class="card-value" id="summTrf">—</div>
+          <div class="card-sub">acumulado</div>
+        </div>
+      </div>
+      <div class="var-chips" id="varChips" style="margin-top:0.875rem;margin-bottom:0;"></div>
     </div>
   </div>
 
-  <div class="var-chips" id="varChips"></div>
-
-  <!-- 1. Cargar valuación -->
-  <div class="section">
-    <div class="section-header" onclick="toggle(&#39;sec1&#39;)">
+  <!-- ── 1. Cargar cartera ── -->
+  <div class="section" id="secCartera">
+    <div class="section-header" onclick="toggleSec('bodyCartera','icoCartera')">
       <div class="section-title"><span class="dot"></span> Cargar valor de cartera</div>
-      <span class="toggle-icon" id="ico1">▼</span>
+      <span class="toggle-icon" id="icoCartera">▼</span>
     </div>
-    <div class="section-body" id="sec1">
+    <div class="section-body" id="bodyCartera">
       <div class="form-grid">
-        <div class="field"><label>Fecha <span class="required-tag">*</span></label><input type="date" id="vFecha"></div>
-        <div class="field"><label>Valor en ARS <span class="required-tag">*</span></label><input type="number" id="vARS" placeholder="0.00" min="0" step="0.01"></div>
-        <div class="field"><label>Valor en USD <span class="required-tag">*</span></label><input type="number" id="vUSD" placeholder="0.00" min="0" step="0.01"></div>
+        <div class="field"><label>Fecha <span class="req">*</span></label><input type="date" id="vFecha"></div>
+        <div class="field"><label>Valor ARS <span class="req">*</span></label><input type="number" id="vARS" placeholder="0.00" min="0" step="0.01"></div>
+        <div class="field"><label>Valor USD <span class="req">*</span></label><input type="number" id="vUSD" placeholder="0.00" min="0" step="0.01"></div>
         <div class="field"><label>&nbsp;</label><button class="btn" id="btnAddVal" onclick="addValuation()">+ Registrar</button></div>
       </div>
-      <div class="hint">Ingresá el valor de cierre de tu cartera en ambas monedas. Si cargás la misma fecha dos veces, sobreescribe el valor anterior.</div>
+      <div class="hint">Valor de cierre en ambas monedas. Si cargás la misma fecha, sobreescribe el valor anterior.</div>
     </div>
   </div>
 
-  <!-- 2. Transferencias -->
-  <div class="section">
-    <div class="section-header" onclick="toggle(&#39;sec2&#39;)">
+  <!-- ── 2. Transferencias ── -->
+  <div class="section" id="secTransf">
+    <div class="section-header" onclick="toggleSec('bodyTransf','icoTransf')">
       <div class="section-title"><span class="dot blue"></span> Transferencias entrantes / salientes</div>
-      <span class="toggle-icon" id="ico2">▼</span>
+      <span class="toggle-icon" id="icoTransf">▼</span>
     </div>
-    <div class="section-body" id="sec2">
+    <div class="section-body" id="bodyTransf">
       <div class="form-grid">
-        <div class="field"><label>Fecha <span class="required-tag">*</span></label><input type="date" id="tFecha"></div>
-        <div class="field"><label>Tipo <span class="required-tag">*</span></label>
+        <div class="field"><label>Fecha <span class="req">*</span></label><input type="date" id="tFecha"></div>
+        <div class="field"><label>Tipo <span class="req">*</span></label>
           <select id="tTipo"><option value="in">↑ Ingreso</option><option value="out">↓ Retiro</option></select>
         </div>
-        <div class="field"><label>Monto ARS <span class="required-tag">*</span></label><input type="number" id="tARS" placeholder="0.00" min="0" step="0.01"></div>
-        <div class="field"><label>Monto USD <span class="required-tag">*</span></label><input type="number" id="tUSD" placeholder="0.00" min="0" step="0.01"></div>
+        <div class="field"><label>Monto ARS <span class="req">*</span></label><input type="number" id="tARS" placeholder="0.00" min="0" step="0.01"></div>
+        <div class="field"><label>Monto USD <span class="req">*</span></label><input type="number" id="tUSD" placeholder="0.00" min="0" step="0.01"></div>
         <div class="field"><label>Descripción</label><input type="text" id="tDesc" placeholder="ej: depósito banco"></div>
         <div class="field"><label>&nbsp;</label><button class="btn" id="btnAddTrf" onclick="addTransfer()">+ Registrar</button></div>
       </div>
-      <div class="hint">Ingresá el monto equivalente en <strong>ambas monedas</strong>. Ambos campos son obligatorios para netear correctamente el rendimiento.</div>
-      <div class="table-wrap" style="margin-top:1.25rem">
+      <div class="hint">Ingresá el monto en <strong>ambas monedas</strong> — ambos campos son obligatorios para netear correctamente el rendimiento.</div>
+      <div class="table-wrap" style="margin-top:1rem">
         <table>
-          <thead><tr><th>Fecha</th><th>Tipo</th><th>ARS</th><th>USD</th><th>Descripción</th><th>Acciones</th></tr></thead>
-          <tbody id="transferTable"><tr><td colspan="6" class="empty">Sin transferencias registradas.</td></tr></tbody>
+          <thead><tr><th>Fecha</th><th>Tipo</th><th>ARS</th><th>USD</th><th>Descripción</th><th></th></tr></thead>
+          <tbody id="transferTable"><tr><td colspan="6" class="empty">Cargando...</td></tr></tbody>
         </table>
       </div>
     </div>
   </div>
 
-  <!-- 3. Histórico -->
-  <div class="section">
-    <div class="section-header" onclick="toggle(&#39;sec3&#39;)">
+  <!-- ── 3. Histórico ── -->
+  <div class="section" id="secHistorico">
+    <div class="section-header" onclick="toggleSec('bodyHistorico','icoHistorico')">
       <div class="section-title"><span class="dot red"></span> Histórico de valuaciones</div>
-      <span class="toggle-icon" id="ico3">▼</span>
+      <span class="toggle-icon" id="icoHistorico">▼</span>
     </div>
-    <div class="section-body" id="sec3">
+    <div class="section-body" id="bodyHistorico">
       <div class="table-wrap">
         <table>
-          <thead><tr><th>Fecha</th><th>ARS</th><th>Δ ARS</th><th>USD</th><th>Δ USD</th><th>Transf. ARS</th><th>Transf. USD</th><th>Rend. neto ARS</th><th>Rend. neto USD</th><th>Acciones</th></tr></thead>
-          <tbody id="histTable"><tr><td colspan="10" class="empty">Sin valuaciones registradas.</td></tr></tbody>
+          <thead>
+            <tr><th>Fecha</th><th id="thValor">Valor</th><th id="thTransf">Transf. netas</th><th id="thRend">Rend. neto</th><th></th></tr>
+          </thead>
+          <tbody id="histTable"><tr><td colspan="5" class="empty">Cargando...</td></tr></tbody>
         </table>
       </div>
     </div>
   </div>
 
-  <!-- 4. Variaciones -->
-  <div class="section">
-    <div class="section-header" onclick="toggle(&#39;sec4&#39;)">
+  <!-- ── 4. Variaciones ── -->
+  <div class="section" id="secVariaciones">
+    <div class="section-header" onclick="toggleSec('bodyVariaciones','icoVariaciones')">
       <div class="section-title"><span class="dot gold"></span> Variaciones por período</div>
-      <span class="toggle-icon" id="ico4">▼</span>
+      <span class="toggle-icon" id="icoVariaciones">▼</span>
     </div>
-    <div class="section-body" id="sec4">
-      <div class="table-wrap" style="margin-bottom:1.5rem">
+    <div class="section-body" id="bodyVariaciones">
+
+      <!-- Tabla períodos predefinidos -->
+      <div class="table-wrap" style="margin-bottom:1.5rem;">
         <table>
-          <thead><tr><th>Período</th><th>Desde</th><th>Hasta</th><th>Var. ARS</th><th>% ARS</th><th>Var. USD</th><th>% USD</th><th>Rend. neto ARS</th><th>Rend. neto USD</th></tr></thead>
-          <tbody id="periodTable"><tr><td colspan="9" class="empty">Necesitás al menos 2 valuaciones para calcular variaciones.</td></tr></tbody>
+          <thead>
+            <tr><th>Período</th><th>Desde</th><th>Hasta</th><th id="thPRend">Rend. neto</th><th id="thPPct">% neto</th><th id="thPTrf">Transf. netas</th></tr>
+          </thead>
+          <tbody id="periodTable"><tr><td colspan="6" class="empty">Necesitás al menos 2 valuaciones.</td></tr></tbody>
         </table>
       </div>
-      <div style="border-top:1px solid var(--border);padding-top:1.25rem;">
-        <div style="font-family:&#39;Space Mono&#39;,monospace;font-size:0.72rem;color:var(--accent);letter-spacing:0.06em;margin-bottom:0.85rem;">▸ PERÍODO PERSONALIZADO</div>
+
+      <!-- Período personalizado -->
+      <div style="border-top:1px solid var(--border);padding-top:1.1rem;">
+        <div style="font-family:'Space Mono',monospace;font-size:0.68rem;color:var(--accent);letter-spacing:0.06em;margin-bottom:0.75rem;">▸ PERÍODO PERSONALIZADO</div>
         <div class="period-builder">
-          <div class="field"><label>Desde <span class="required-tag">*</span></label><input type="date" id="pDesde"></div>
-          <div class="field"><label>Hasta <span class="required-tag">*</span></label><input type="date" id="pHasta"></div>
+          <div class="field"><label>Desde <span class="req">*</span></label><input type="date" id="pDesde"></div>
+          <div class="field"><label>Hasta <span class="req">*</span></label><input type="date" id="pHasta"></div>
           <div class="field"><label>&nbsp;</label><button class="btn gold-btn" onclick="calcCustomPeriod()">Calcular</button></div>
-          <div class="field"><label>&nbsp;</label><button class="btn secondary" onclick="clearCustomPeriod()">Limpiar</button></div>
+          <div class="field"><label>&nbsp;</label><button class="btn secondary" onclick="clearCustom()">Limpiar</button></div>
         </div>
-        <div class="custom-result" id="customResult">
-          <div style="font-family:&#39;Space Mono&#39;,monospace;font-size:0.72rem;color:var(--muted);margin-bottom:0.25rem;" id="customResultTitle"></div>
-          <div class="custom-result-grid" id="customResultGrid"></div>
+
+        <div class="chart-container" id="chartContainer">
+          <!-- Meta cards -->
+          <div class="chart-meta" id="chartMeta"></div>
+          <!-- Mode toggle -->
+          <div class="mode-toggle">
+            <button class="mode-btn active" id="modeBtn1" onclick="setChartMode('pct')">% Rendimiento</button>
+            <button class="mode-btn" id="modeBtn2" onclick="setChartMode('cap')">Ganancia de capital</button>
+          </div>
+          <!-- Chart -->
+          <div style="position:relative;width:100%;height:300px;">
+            <canvas id="perfChart" role="img" aria-label="Gráfico de rendimiento neto de cartera en el período seleccionado">Rendimiento neto de cartera.</canvas>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;margin-top:8px;font-size:0.68rem;color:var(--muted);">
+            <span style="display:flex;align-items:center;gap:4px;"><span style="width:9px;height:9px;border-radius:2px;background:#10b981;display:inline-block;"></span>Rendimiento neto</span>
+            <span id="chartLegendMode" style="color:var(--muted);">% acumulado neto desde inicio del período</span>
+          </div>
         </div>
       </div>
     </div>
@@ -266,28 +325,28 @@
   </div>
 </div>
 
-<!-- Modal Edición Valuación -->
+<!-- Modal Valuación -->
 <div class="modal-overlay" id="editValModal">
   <div class="modal">
-    <button class="modal-close" onclick="closeModal(&#39;editValModal&#39;)">✕</button>
+    <button class="modal-close" onclick="closeModal('editValModal')">✕</button>
     <div class="modal-title">✎ Editar valuación</div>
     <input type="hidden" id="editValId">
     <div class="form-grid" style="grid-template-columns:1fr 1fr 1fr;">
       <div class="field"><label>Fecha</label><input type="date" id="editValFecha"></div>
-      <div class="field"><label>ARS</label><input type="number" id="editValARS" placeholder="0.00" step="0.01" min="0"></div>
-      <div class="field"><label>USD</label><input type="number" id="editValUSD" placeholder="0.00" step="0.01" min="0"></div>
+      <div class="field"><label>ARS</label><input type="number" id="editValARS" step="0.01" min="0"></div>
+      <div class="field"><label>USD</label><input type="number" id="editValUSD" step="0.01" min="0"></div>
     </div>
     <div class="modal-actions">
-      <button class="btn secondary" onclick="closeModal(&#39;editValModal&#39;)">Cancelar</button>
-      <button class="btn" id="btnSaveVal" onclick="saveEditVal()">Guardar cambios</button>
+      <button class="btn secondary" onclick="closeModal('editValModal')">Cancelar</button>
+      <button class="btn" id="btnSaveVal" onclick="saveEditVal()">Guardar</button>
     </div>
   </div>
 </div>
 
-<!-- Modal Edición Transferencia -->
+<!-- Modal Transferencia -->
 <div class="modal-overlay" id="editTrfModal">
   <div class="modal">
-    <button class="modal-close" onclick="closeModal(&#39;editTrfModal&#39;)">✕</button>
+    <button class="modal-close" onclick="closeModal('editTrfModal')">✕</button>
     <div class="modal-title">✎ Editar transferencia</div>
     <input type="hidden" id="editTrfId">
     <div class="form-grid" style="grid-template-columns:1fr 1fr;">
@@ -295,441 +354,383 @@
       <div class="field"><label>Tipo</label>
         <select id="editTrfTipo"><option value="in">↑ Ingreso</option><option value="out">↓ Retiro</option></select>
       </div>
-      <div class="field"><label>ARS</label><input type="number" id="editTrfARS" placeholder="0.00" step="0.01" min="0"></div>
-      <div class="field"><label>USD</label><input type="number" id="editTrfUSD" placeholder="0.00" step="0.01" min="0"></div>
-      <div class="field" style="grid-column:1/-1;"><label>Descripción</label><input type="text" id="editTrfDesc" placeholder="opcional"></div>
+      <div class="field"><label>ARS</label><input type="number" id="editTrfARS" step="0.01" min="0"></div>
+      <div class="field"><label>USD</label><input type="number" id="editTrfUSD" step="0.01" min="0"></div>
+      <div class="field" style="grid-column:1/-1;"><label>Descripción</label><input type="text" id="editTrfDesc"></div>
     </div>
     <div class="modal-actions">
-      <button class="btn secondary" onclick="closeModal(&#39;editTrfModal&#39;)">Cancelar</button>
-      <button class="btn" id="btnSaveTrf" onclick="saveEditTrf()">Guardar cambios</button>
+      <button class="btn secondary" onclick="closeModal('editTrfModal')">Cancelar</button>
+      <button class="btn" id="btnSaveTrf" onclick="saveEditTrf()">Guardar</button>
     </div>
   </div>
 </div>
 
 <div id="toast"></div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <script>
-// ── Supabase config ──
+// ── Supabase ──
 const SB_URL = 'https://cjbxhaienxoopzimiruh.supabase.co';
 const SB_KEY = 'sb_publishable_Wgl55UG_LoQuwtWQ3VverA_iyGIouZ4';
+const H = { 'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':'return=representation' };
 
-const headers = {
-  'apikey': SB_KEY,
-  'Authorization': 'Bearer ' + SB_KEY,
-  'Content-Type': 'application/json',
-  'Prefer': 'return=representation'
-};
-
-async function sbGet(table, order = 'date') {
-  const r = await fetch(`${SB_URL}/rest/v1/${table}?order=${order}.asc`, { headers });
-  if (!r.ok) throw new Error(await r.text());
-  return r.json();
-}
-async function sbInsert(table, data) {
-  const r = await fetch(`${SB_URL}/rest/v1/${table}`, { method:'POST', headers, body: JSON.stringify(data) });
-  if (!r.ok) throw new Error(await r.text());
-  return r.json();
-}
-async function sbUpdate(table, id, data) {
-  const r = await fetch(`${SB_URL}/rest/v1/${table}?id=eq.${id}`, { method:'PATCH', headers, body: JSON.stringify(data) });
-  if (!r.ok) throw new Error(await r.text());
-  return r.json();
-}
-async function sbUpsert(table, data, onConflict) {
-  const h = { ...headers, 'Prefer': `resolution=merge-duplicates,return=representation` };
-  const r = await fetch(`${SB_URL}/rest/v1/${table}?on_conflict=${onConflict}`, { method:'POST', headers:h, body: JSON.stringify(data) });
-  if (!r.ok) throw new Error(await r.text());
-  return r.json();
-}
-async function sbDelete(table, id) {
-  const r = await fetch(`${SB_URL}/rest/v1/${table}?id=eq.${id}`, { method:'DELETE', headers });
-  if (!r.ok) throw new Error(await r.text());
-}
+async function sbGet(t,o='date'){ const r=await fetch(`${SB_URL}/rest/v1/${t}?order=${o}.asc`,{headers:H}); if(!r.ok)throw new Error(await r.text()); return r.json(); }
+async function sbInsert(t,d){ const r=await fetch(`${SB_URL}/rest/v1/${t}`,{method:'POST',headers:H,body:JSON.stringify(d)}); if(!r.ok)throw new Error(await r.text()); return r.json(); }
+async function sbUpdate(t,id,d){ const r=await fetch(`${SB_URL}/rest/v1/${t}?id=eq.${id}`,{method:'PATCH',headers:H,body:JSON.stringify(d)}); if(!r.ok)throw new Error(await r.text()); return r.json(); }
+async function sbUpsert(t,d,c){ const h={...H,'Prefer':'resolution=merge-duplicates,return=representation'}; const r=await fetch(`${SB_URL}/rest/v1/${t}?on_conflict=${c}`,{method:'POST',headers:h,body:JSON.stringify(d)}); if(!r.ok)throw new Error(await r.text()); return r.json(); }
+async function sbDelete(t,id){ const r=await fetch(`${SB_URL}/rest/v1/${t}?id=eq.${id}`,{method:'DELETE',headers:H}); if(!r.ok)throw new Error(await r.text()); }
 
 // ── State ──
-let valuations = [];
-let transfers  = [];
+let valuations=[], transfers=[], currency='ars', chartMode='pct', chartInst=null;
 
-// ── Sync indicator ──
-function setSyncState(state, msg) {
-  const dot = document.getElementById('syncDot');
-  const lbl = document.getElementById('syncLabel');
-  dot.className = 'sync-dot ' + state;
-  lbl.textContent = msg;
+// ── Helpers ──
+function setSyncState(s,m){ document.getElementById('syncDot').className='sync-dot '+s; document.getElementById('syncLabel').textContent=m; }
+function cls(n){ return n>0?'up':n<0?'down':'neutral'; }
+function fmtC(n){ return currency==='ars' ? '$ '+Math.round(n).toLocaleString('es-AR') : 'USD '+n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2}); }
+function fmtPct(n){ return (n>0?'+':'')+n.toFixed(2)+'%'; }
+function showToast(msg,err=false){ const t=document.getElementById('toast'); t.textContent=msg; t.className=err?'show err':'show'; setTimeout(()=>t.className='',2800); }
+function setLoading(id,on){ const b=document.getElementById(id); if(!b)return; b.disabled=on; if(on){b.dataset.orig=b.textContent;b.textContent='...';}else{b.textContent=b.dataset.orig||b.textContent;} }
+function openModal(id){ document.getElementById(id).classList.add('open'); }
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-overlay').forEach(ov=>ov.addEventListener('click',e=>{ if(e.target===ov)ov.classList.remove('open'); }));
+function scrollTo(id){ document.getElementById(id).scrollIntoView({behavior:'smooth',block:'start'}); }
+
+function toggleSec(bodyId,icoId){
+  const b=document.getElementById(bodyId), i=document.getElementById(icoId);
+  const collapsed=b.classList.toggle('collapsed');
+  i.textContent=collapsed?'▶':'▼';
 }
 
-// ── Formatters ──
-function fmtARS(n) { return '$ ' + Number(n).toLocaleString('es-AR', { minimumFractionDigits:2, maximumFractionDigits:2 }); }
-function fmtUSD(n) { return 'USD ' + Number(n).toLocaleString('en-US', { minimumFractionDigits:2, maximumFractionDigits:2 }); }
-function fmtPct(n) { return (n>0?'+':'') + n.toFixed(2) + '%'; }
-function cls(n)    { return n > 0 ? 'up' : n < 0 ? 'down' : 'neutral'; }
-
-function showToast(msg, isError = false) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.className = isError ? 'show err' : 'show';
-  setTimeout(() => t.className = '', 2800);
+function setDefaultDates(){
+  const today=new Date().toISOString().split('T')[0];
+  ['vFecha','tFecha'].forEach(id=>{ const el=document.getElementById(id); if(el&&!el.value)el.value=today; });
+  document.getElementById('pHasta').value=today;
 }
 
-function toggle(id) {
-  const el  = document.getElementById(id);
-  const num = id.slice(-1);
-  const ico = document.getElementById('ico' + num);
-  const vis = el.style.display !== 'none';
-  el.style.display = vis ? 'none' : '';
-  ico.textContent  = vis ? '▶' : '▼';
+// ── Currency toggle ──
+function setCurrency(cur){
+  currency=cur;
+  document.getElementById('btnARS').className='cur-btn'+(cur==='ars'?' active':'');
+  document.getElementById('btnUSD').className='cur-btn'+(cur==='usd'?' active':'');
+  render();
+  if(document.getElementById('chartContainer').classList.contains('visible')){
+    drawChart(window._lastChartPoints);
+  }
 }
 
-function openModal(id)  { document.getElementById(id).classList.add('open'); }
-function closeModal(id) { document.getElementById(id).classList.remove('open'); }
-document.querySelectorAll('.modal-overlay').forEach(ov => {
-  ov.addEventListener('click', e => { if (e.target === ov) ov.classList.remove('open'); });
-});
-
-function setLoading(btnId, loading) {
-  const b = document.getElementById(btnId);
-  if (!b) return;
-  b.disabled = loading;
-  if (loading) b.dataset.orig = b.textContent, b.textContent = '...';
-  else         b.textContent = b.dataset.orig || b.textContent;
+// ── Net transfers math ──
+function netTrf(from,to){
+  let arsNet=0,usdNet=0;
+  for(const t of transfers){
+    if(t.date>from && t.date<=to){ const s=t.type==='in'?1:-1; arsNet+=s*t.ars; usdNet+=s*t.usd; }
+  }
+  return {arsNet,usdNet};
 }
+function netTrfCur(from,to){ const {arsNet,usdNet}=netTrf(from,to); return currency==='ars'?arsNet:usdNet; }
+function valCur(v){ return currency==='ars'?v.ars:v.usd; }
 
-function setDefaultDates() {
-  const today = new Date().toISOString().split('T')[0];
-  ['vFecha','tFecha'].forEach(id => { const el=document.getElementById(id); if(el&&!el.value) el.value=today; });
-  document.getElementById('pHasta').value = today;
-  document.getElementById('headerDate').textContent =
-    new Date().toLocaleDateString('es-AR', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
-}
-
-// ── Load all data ──
-async function loadAll() {
-  setSyncState('loading', 'Cargando...');
-  try {
-    [valuations, transfers] = await Promise.all([
-      sbGet('valuations', 'date'),
-      sbGet('transfers',  'date')
-    ]);
-    setSyncState('ok', 'Sincronizado');
+// ── Load ──
+async function loadAll(){
+  setSyncState('loading','Cargando...');
+  try{
+    [valuations,transfers]=await Promise.all([sbGet('valuations','date'),sbGet('transfers','date')]);
+    setSyncState('ok','Sincronizado');
     render();
-  } catch(e) {
-    setSyncState('error', 'Error de conexión');
-    showToast('⚠ No se pudo conectar con la base de datos.', true);
-    console.error(e);
+  }catch(e){
+    setSyncState('error','Error');
+    showToast('⚠ No se pudo conectar con la base de datos.',true);
   }
   document.getElementById('loadingOverlay').classList.add('hidden');
 }
 
-// ── Add valuation ──
-async function addValuation() {
-  const fecha = document.getElementById('vFecha').value;
-  const ars   = parseFloat(document.getElementById('vARS').value);
-  const usd   = parseFloat(document.getElementById('vUSD').value);
-  if (!fecha || isNaN(ars) || isNaN(usd) || ars < 0 || usd < 0) { showToast('⚠ Completá todos los campos.', true); return; }
-  setLoading('btnAddVal', true);
-  setSyncState('loading', 'Guardando...');
-  try {
-    await sbUpsert('valuations', { date:fecha, ars, usd }, 'date');
-    document.getElementById('vARS').value = '';
-    document.getElementById('vUSD').value = '';
-    showToast('✓ Valuación registrada.');
-    await loadAll();
-  } catch(e) {
-    setSyncState('error', 'Error al guardar');
-    showToast('⚠ Error al guardar: ' + e.message, true);
-  }
-  setLoading('btnAddVal', false);
+// ── Add / Edit / Delete valuación ──
+async function addValuation(){
+  const fecha=document.getElementById('vFecha').value, ars=parseFloat(document.getElementById('vARS').value), usd=parseFloat(document.getElementById('vUSD').value);
+  if(!fecha||isNaN(ars)||isNaN(usd)||ars<0||usd<0){ showToast('⚠ Completá todos los campos.',true); return; }
+  setLoading('btnAddVal',true); setSyncState('loading','Guardando...');
+  try{ await sbUpsert('valuations',{date:fecha,ars,usd},'date'); document.getElementById('vARS').value=''; document.getElementById('vUSD').value=''; showToast('✓ Valuación registrada.'); await loadAll(); }
+  catch(e){ setSyncState('error','Error'); showToast('⚠ '+e.message,true); }
+  setLoading('btnAddVal',false);
 }
+function editValuation(id){ const v=valuations.find(x=>x.id===id); if(!v)return; document.getElementById('editValId').value=id; document.getElementById('editValFecha').value=v.date; document.getElementById('editValARS').value=v.ars; document.getElementById('editValUSD').value=v.usd; openModal('editValModal'); }
+async function saveEditVal(){
+  const id=document.getElementById('editValId').value, fecha=document.getElementById('editValFecha').value, ars=parseFloat(document.getElementById('editValARS').value), usd=parseFloat(document.getElementById('editValUSD').value);
+  if(!fecha||isNaN(ars)||isNaN(usd)||ars<0||usd<0){ showToast('⚠ Completá todos los campos.',true); return; }
+  setLoading('btnSaveVal',true); setSyncState('loading','Guardando...');
+  try{ await sbUpdate('valuations',id,{date:fecha,ars,usd}); closeModal('editValModal'); showToast('✓ Valuación actualizada.'); await loadAll(); }
+  catch(e){ showToast('⚠ '+e.message,true); }
+  setLoading('btnSaveVal',false);
+}
+async function delValuation(id){ if(!confirm('¿Eliminar esta valuación?'))return; setSyncState('loading','Eliminando...'); try{ await sbDelete('valuations',id); showToast('Valuación eliminada.'); await loadAll(); }catch(e){ showToast('⚠ '+e.message,true); } }
 
-// ── Edit valuation ──
-function editValuation(id) {
-  const v = valuations.find(x => x.id === id);
-  if (!v) return;
-  document.getElementById('editValId').value    = id;
-  document.getElementById('editValFecha').value = v.date;
-  document.getElementById('editValARS').value   = v.ars;
-  document.getElementById('editValUSD').value   = v.usd;
-  openModal('editValModal');
+// ── Add / Edit / Delete transferencia ──
+async function addTransfer(){
+  const fecha=document.getElementById('tFecha').value, tipo=document.getElementById('tTipo').value, ars=parseFloat(document.getElementById('tARS').value), usd=parseFloat(document.getElementById('tUSD').value), desc=document.getElementById('tDesc').value.trim();
+  if(!fecha||isNaN(ars)||isNaN(usd)||ars<0||usd<0){ showToast('⚠ Completá fecha y ambos montos.',true); return; }
+  setLoading('btnAddTrf',true); setSyncState('loading','Guardando...');
+  try{ await sbInsert('transfers',{date:fecha,type:tipo,ars,usd,description:desc}); document.getElementById('tARS').value=''; document.getElementById('tUSD').value=''; document.getElementById('tDesc').value=''; showToast('✓ Transferencia registrada.'); await loadAll(); }
+  catch(e){ showToast('⚠ '+e.message,true); }
+  setLoading('btnAddTrf',false);
 }
-async function saveEditVal() {
-  const id    = document.getElementById('editValId').value;
-  const fecha = document.getElementById('editValFecha').value;
-  const ars   = parseFloat(document.getElementById('editValARS').value);
-  const usd   = parseFloat(document.getElementById('editValUSD').value);
-  if (!fecha || isNaN(ars) || isNaN(usd) || ars < 0 || usd < 0) { showToast('⚠ Completá todos los campos.', true); return; }
-  setLoading('btnSaveVal', true);
-  setSyncState('loading', 'Guardando...');
-  try {
-    await sbUpdate('valuations', id, { date:fecha, ars, usd });
-    closeModal('editValModal');
-    showToast('✓ Valuación actualizada.');
-    await loadAll();
-  } catch(e) {
-    setSyncState('error', 'Error');
-    showToast('⚠ Error: ' + e.message, true);
-  }
-  setLoading('btnSaveVal', false);
+function editTransfer(id){ const t=transfers.find(x=>x.id===id); if(!t)return; document.getElementById('editTrfId').value=id; document.getElementById('editTrfFecha').value=t.date; document.getElementById('editTrfTipo').value=t.type; document.getElementById('editTrfARS').value=t.ars; document.getElementById('editTrfUSD').value=t.usd; document.getElementById('editTrfDesc').value=t.description||''; openModal('editTrfModal'); }
+async function saveEditTrf(){
+  const id=document.getElementById('editTrfId').value, fecha=document.getElementById('editTrfFecha').value, tipo=document.getElementById('editTrfTipo').value, ars=parseFloat(document.getElementById('editTrfARS').value), usd=parseFloat(document.getElementById('editTrfUSD').value), desc=document.getElementById('editTrfDesc').value.trim();
+  if(!fecha||isNaN(ars)||isNaN(usd)||ars<0||usd<0){ showToast('⚠ Completá fecha y ambos montos.',true); return; }
+  setLoading('btnSaveTrf',true); setSyncState('loading','Guardando...');
+  try{ await sbUpdate('transfers',id,{date:fecha,type:tipo,ars,usd,description:desc}); closeModal('editTrfModal'); showToast('✓ Transferencia actualizada.'); await loadAll(); }
+  catch(e){ showToast('⚠ '+e.message,true); }
+  setLoading('btnSaveTrf',false);
 }
-async function delValuation(id) {
-  if (!confirm('¿Eliminar esta valuación?')) return;
-  setSyncState('loading', 'Eliminando...');
-  try {
-    await sbDelete('valuations', id);
-    showToast('Valuación eliminada.');
-    await loadAll();
-  } catch(e) {
-    setSyncState('error', 'Error');
-    showToast('⚠ Error: ' + e.message, true);
-  }
-}
-
-// ── Add transfer ──
-async function addTransfer() {
-  const fecha = document.getElementById('tFecha').value;
-  const tipo  = document.getElementById('tTipo').value;
-  const ars   = parseFloat(document.getElementById('tARS').value);
-  const usd   = parseFloat(document.getElementById('tUSD').value);
-  const desc  = document.getElementById('tDesc').value.trim();
-  if (!fecha || isNaN(ars) || isNaN(usd) || ars < 0 || usd < 0) { showToast('⚠ Completá fecha y ambos montos.', true); return; }
-  setLoading('btnAddTrf', true);
-  setSyncState('loading', 'Guardando...');
-  try {
-    await sbInsert('transfers', { date:fecha, type:tipo, ars, usd, description:desc });
-    document.getElementById('tARS').value  = '';
-    document.getElementById('tUSD').value  = '';
-    document.getElementById('tDesc').value = '';
-    showToast('✓ Transferencia registrada.');
-    await loadAll();
-  } catch(e) {
-    setSyncState('error', 'Error al guardar');
-    showToast('⚠ Error: ' + e.message, true);
-  }
-  setLoading('btnAddTrf', false);
-}
-
-// ── Edit transfer ──
-function editTransfer(id) {
-  const t = transfers.find(x => x.id === id);
-  if (!t) return;
-  document.getElementById('editTrfId').value    = id;
-  document.getElementById('editTrfFecha').value = t.date;
-  document.getElementById('editTrfTipo').value  = t.type;
-  document.getElementById('editTrfARS').value   = t.ars;
-  document.getElementById('editTrfUSD').value   = t.usd;
-  document.getElementById('editTrfDesc').value  = t.description || '';
-  openModal('editTrfModal');
-}
-async function saveEditTrf() {
-  const id    = document.getElementById('editTrfId').value;
-  const fecha = document.getElementById('editTrfFecha').value;
-  const tipo  = document.getElementById('editTrfTipo').value;
-  const ars   = parseFloat(document.getElementById('editTrfARS').value);
-  const usd   = parseFloat(document.getElementById('editTrfUSD').value);
-  const desc  = document.getElementById('editTrfDesc').value.trim();
-  if (!fecha || isNaN(ars) || isNaN(usd) || ars < 0 || usd < 0) { showToast('⚠ Completá fecha y ambos montos.', true); return; }
-  setLoading('btnSaveTrf', true);
-  setSyncState('loading', 'Guardando...');
-  try {
-    await sbUpdate('transfers', id, { date:fecha, type:tipo, ars, usd, description:desc });
-    closeModal('editTrfModal');
-    showToast('✓ Transferencia actualizada.');
-    await loadAll();
-  } catch(e) {
-    setSyncState('error', 'Error');
-    showToast('⚠ Error: ' + e.message, true);
-  }
-  setLoading('btnSaveTrf', false);
-}
-async function delTransfer(id) {
-  if (!confirm('¿Eliminar esta transferencia?')) return;
-  setSyncState('loading', 'Eliminando...');
-  try {
-    await sbDelete('transfers', id);
-    showToast('Transferencia eliminada.');
-    await loadAll();
-  } catch(e) {
-    setSyncState('error', 'Error');
-    showToast('⚠ Error: ' + e.message, true);
-  }
-}
-
-// ── Transfer math ──
-function netTransfers(from, to) {
-  let arsNet=0, usdNet=0;
-  for (const t of transfers) {
-    if (t.date > from && t.date <= to) {
-      const sign = t.type === 'in' ? 1 : -1;
-      arsNet += sign * t.ars;
-      usdNet += sign * t.usd;
-    }
-  }
-  return { arsNet, usdNet };
-}
-
-// ── Custom period ──
-function findClosestVal(dateStr) {
-  const exact = valuations.find(v => v.date === dateStr);
-  if (exact) return exact;
-  for (let i = valuations.length-1; i >= 0; i--) {
-    if (valuations[i].date <= dateStr) return valuations[i];
-  }
-  return null;
-}
-function calcCustomPeriod() {
-  const desde = document.getElementById('pDesde').value;
-  const hasta = document.getElementById('pHasta').value;
-  const el    = document.getElementById('customResult');
-  const grid  = document.getElementById('customResultGrid');
-  const title = document.getElementById('customResultTitle');
-  if (!desde || !hasta) { showToast('⚠ Seleccioná ambas fechas.', true); return; }
-  if (desde >= hasta)   { showToast('⚠ "Desde" debe ser anterior a "Hasta".', true); return; }
-  if (!valuations.length) { showToast('⚠ Sin datos de valuación.', true); return; }
-  const baseVal = findClosestVal(desde);
-  const endVal  = findClosestVal(hasta);
-  if (!baseVal || !endVal) { showToast('⚠ No hay valuaciones en ese rango.', true); return; }
-  if (baseVal.date === endVal.date) { showToast('⚠ Ambas fechas apuntan a la misma valuación.', true); return; }
-  const { arsNet, usdNet } = netTransfers(baseVal.date, endVal.date);
-  const dA=endVal.ars-baseVal.ars, dU=endVal.usd-baseVal.usd;
-  const nA=dA-arsNet, nU=dU-usdNet;
-  const pA=(dA/baseVal.ars)*100, pU=(dU/baseVal.usd)*100;
-  const npA=(nA/baseVal.ars)*100, npU=(nU/baseVal.usd)*100;
-  title.textContent = `Comparando ${baseVal.date} → ${endVal.date}`;
-  const items = [
-    { label:'ARS inicio',        val:fmtARS(baseVal.ars), c:'' },
-    { label:'ARS fin',           val:fmtARS(endVal.ars),  c:'' },
-    { label:'Var. bruta ARS',    val:fmtARS(dA),          c:cls(dA) },
-    { label:'% bruto ARS',       val:fmtPct(pA),          c:cls(pA) },
-    { label:'USD inicio',        val:fmtUSD(baseVal.usd), c:'' },
-    { label:'USD fin',           val:fmtUSD(endVal.usd),  c:'' },
-    { label:'Var. bruta USD',    val:fmtUSD(dU),          c:cls(dU) },
-    { label:'% bruto USD',       val:fmtPct(pU),          c:cls(pU) },
-    { label:'Transf. netas ARS', val:fmtARS(arsNet),      c:'neutral' },
-    { label:'Transf. netas USD', val:fmtUSD(usdNet),      c:'neutral' },
-    { label:'Rend. neto ARS',    val:fmtARS(nA),          c:cls(nA) },
-    { label:'% neto ARS',        val:fmtPct(npA),         c:cls(npA) },
-    { label:'Rend. neto USD',    val:fmtUSD(nU),          c:cls(nU) },
-    { label:'% neto USD',        val:fmtPct(npU),         c:cls(npU) },
-  ];
-  grid.innerHTML = items.map(i=>`<div class="cr-item"><span class="cr-label">${i.label}</span><span class="cr-val ${i.c}">${i.val}</span></div>`).join('');
-  el.classList.add('visible');
-}
-function clearCustomPeriod() {
-  document.getElementById('customResult').classList.remove('visible');
-  document.getElementById('pDesde').value = '';
-  document.getElementById('pHasta').value = new Date().toISOString().split('T')[0];
-}
+async function delTransfer(id){ if(!confirm('¿Eliminar esta transferencia?'))return; try{ await sbDelete('transfers',id); showToast('Transferencia eliminada.'); await loadAll(); }catch(e){ showToast('⚠ '+e.message,true); } }
 
 // ── Render ──
-function render() {
-  renderSummary(); renderVarChips(); renderTransferTable(); renderHistTable(); renderPeriodTable();
+function render(){ renderSummary(); renderVarChips(); renderTransferTable(); renderHistTable(); renderPeriodTable(); updateTableHeaders(); }
+
+function updateTableHeaders(){
+  const c=currency==='ars'?'ARS':'USD';
+  document.getElementById('thValor').textContent='Valor ('+c+')';
+  document.getElementById('thTransf').textContent='Transf. netas ('+c+')';
+  document.getElementById('thRend').textContent='Rend. neto ('+c+')';
+  document.getElementById('thPRend').textContent='Rend. neto ('+c+')';
+  document.getElementById('thPPct').textContent='% neto';
+  document.getElementById('thPTrf').textContent='Transf. netas ('+c+')';
 }
 
-function renderSummary() {
-  if (!valuations.length) return;
-  const last = valuations[valuations.length-1];
-  document.getElementById('summARS').textContent     = fmtARS(last.ars);
-  document.getElementById('summUSD').textContent     = fmtUSD(last.usd);
-  document.getElementById('summARSdate').textContent = last.date;
-  document.getElementById('summUSDdate').textContent = last.date;
-  if (valuations.length >= 2) {
-    const first = valuations[0];
-    const { arsNet, usdNet } = netTransfers(first.date, last.date);
-    const retARS = last.ars - first.ars - arsNet;
-    const retUSD = last.usd - first.usd - usdNet;
-    const el1=document.getElementById('summRetARS'), el2=document.getElementById('summRetUSD');
-    el1.textContent=fmtARS(retARS); el1.className='card-value '+cls(retARS);
-    el2.textContent=fmtUSD(retUSD); el2.className='card-value '+cls(retUSD);
+function renderSummary(){
+  if(!valuations.length)return;
+  const last=valuations[valuations.length-1];
+  document.getElementById('summVal').textContent=fmtC(valCur(last));
+  document.getElementById('summValDate').textContent=last.date;
+  if(valuations.length>=2){
+    const first=valuations[0];
+    const trfNet=netTrfCur(first.date,last.date);
+    const baseV=valCur(first), lastV=valCur(last);
+    const rend=lastV-baseV-trfNet;
+    const pct=(rend/baseV)*100;
+    const el1=document.getElementById('summRend'), el2=document.getElementById('summRendPct');
+    el1.textContent=fmtC(rend); el1.className='card-value '+cls(rend);
+    el2.textContent=fmtPct(pct); el2.className='card-value '+cls(pct);
+    const elTrf=document.getElementById('summTrf');
+    elTrf.textContent=fmtC(trfNet); elTrf.className='card-value '+cls(trfNet);
   }
 }
 
-function renderVarChips() {
+function renderVarChips(){
   const el=document.getElementById('varChips'); el.innerHTML='';
-  if (valuations.length < 2) return;
+  if(valuations.length<2)return;
   const last=valuations[valuations.length-1], lastDate=last.date;
-  function findClosest(daysAgo) {
-    const target=new Date(lastDate); target.setDate(target.getDate()-daysAgo);
-    const tStr=target.toISOString().split('T')[0];
-    for (let i=valuations.length-2;i>=0;i--) { if(valuations[i].date<=tStr) return valuations[i]; }
-    return valuations[0];
-  }
-  [{ label:'Diario',days:1},{ label:'Semanal',days:7},{ label:'Mensual',days:30},{ label:'Anual',days:365}].forEach(p => {
-    const base=findClosest(p.days); if(base.date===lastDate) return;
-    const {arsNet,usdNet}=netTransfers(base.date,lastDate);
-    const pA=((last.ars-base.ars-arsNet)/base.ars)*100;
-    const pU=((last.usd-base.usd-usdNet)/base.usd)*100;
+  function findClosest(d){ const t=new Date(lastDate); t.setDate(t.getDate()-d); const s=t.toISOString().split('T')[0]; for(let i=valuations.length-2;i>=0;i--){if(valuations[i].date<=s)return valuations[i];} return valuations[0]; }
+  [{label:'Diario',days:1},{label:'Semanal',days:7},{label:'Mensual',days:30},{label:'Anual',days:365}].forEach(p=>{
+    const base=findClosest(p.days); if(base.date===lastDate)return;
+    const trfNet=netTrfCur(base.date,lastDate);
+    const baseV=valCur(base), lastV=valCur(last);
+    const pct=((lastV-baseV-trfNet)/baseV)*100;
     const chip=document.createElement('div'); chip.className='var-chip';
-    chip.innerHTML=`<span class="var-chip-label">${p.label}</span><span class="var-chip-val ${cls(pA)}">${fmtPct(pA)} ARS</span><span class="var-chip-val ${cls(pU)}" style="font-size:0.7rem">${fmtPct(pU)} USD</span>`;
+    chip.innerHTML=`<span class="var-chip-label">${p.label}</span><span class="var-chip-val ${cls(pct)}">${fmtPct(pct)}</span>`;
     el.appendChild(chip);
   });
 }
 
-function renderTransferTable() {
+function renderTransferTable(){
   const tb=document.getElementById('transferTable');
-  if (!transfers.length) { tb.innerHTML='<tr><td colspan="6" class="empty">Sin transferencias registradas.</td></tr>'; return; }
+  if(!transfers.length){ tb.innerHTML='<tr><td colspan="6" class="empty">Sin transferencias registradas.</td></tr>'; return; }
   tb.innerHTML=[...transfers].reverse().map(t=>`
     <tr>
       <td>${t.date}</td>
       <td>${t.type==='in'?'<span class="up">↑ Ingreso</span>':'<span class="down">↓ Retiro</span>'}</td>
-      <td>${fmtARS(t.ars)}</td><td>${fmtUSD(t.usd)}</td>
+      <td>$ ${Math.round(t.ars).toLocaleString('es-AR')}</td>
+      <td>USD ${t.usd.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2})}</td>
       <td style="color:var(--muted)">${t.description||'—'}</td>
-      <td>
-        <button class="icon-btn edit" onclick="editTransfer('${t.id}')" title="Editar">✎</button>
-        <button class="icon-btn del"  onclick="delTransfer('${t.id}')"  title="Eliminar">✕</button>
-      </td>
+      <td><button class="icon-btn edit" onclick="editTransfer('${t.id}')" title="Editar">✎</button><button class="icon-btn del" onclick="delTransfer('${t.id}')" title="Eliminar">✕</button></td>
     </tr>`).join('');
 }
 
-function renderHistTable() {
+function renderHistTable(){
   const tb=document.getElementById('histTable');
-  if (!valuations.length) { tb.innerHTML='<tr><td colspan="10" class="empty">Sin valuaciones registradas.</td></tr>'; return; }
+  if(!valuations.length){ tb.innerHTML='<tr><td colspan="5" class="empty">Sin valuaciones registradas.</td></tr>'; return; }
   tb.innerHTML=[...valuations].reverse().map((v,ri)=>{
     const i=valuations.length-1-ri, prev=i>0?valuations[i-1]:null;
-    let dARS='—',dUSD='—',cA='',cU='',trfA='—',trfU='—',nA='—',nU='—',cNA='',cNU='';
-    if (prev) {
-      const {arsNet,usdNet}=netTransfers(prev.date,v.date);
-      const da=v.ars-prev.ars, du=v.usd-prev.usd, na=da-arsNet, nu=du-usdNet;
-      dARS=fmtARS(da);cA=cls(da); dUSD=fmtUSD(du);cU=cls(du);
-      trfA=fmtARS(arsNet); trfU=fmtUSD(usdNet);
-      nA=fmtARS(na);cNA=cls(na); nU=fmtUSD(nu);cNU=cls(nu);
+    let trfStr='—', rendStr='—', rCls='';
+    if(prev){
+      const trfNet=netTrfCur(prev.date,v.date);
+      const rend=valCur(v)-valCur(prev)-trfNet;
+      trfStr=fmtC(trfNet); rendStr=fmtC(rend); rCls=cls(rend);
     }
     return `<tr>
       <td>${v.date}</td>
-      <td>${fmtARS(v.ars)}</td><td class="${cA}">${dARS}</td>
-      <td>${fmtUSD(v.usd)}</td><td class="${cU}">${dUSD}</td>
-      <td style="color:var(--muted)">${trfA}</td><td style="color:var(--muted)">${trfU}</td>
-      <td class="${cNA}">${nA}</td><td class="${cNU}">${nU}</td>
-      <td>
-        <button class="icon-btn edit" onclick="editValuation('${v.id}')" title="Editar">✎</button>
-        <button class="icon-btn del"  onclick="delValuation('${v.id}')"  title="Eliminar">✕</button>
-      </td></tr>`;
+      <td>${fmtC(valCur(v))}</td>
+      <td style="color:var(--muted)">${trfStr}</td>
+      <td class="${rCls}">${rendStr}</td>
+      <td><button class="icon-btn edit" onclick="editValuation('${v.id}')" title="Editar">✎</button><button class="icon-btn del" onclick="delValuation('${v.id}')" title="Eliminar">✕</button></td>
+    </tr>`;
   }).join('');
 }
 
-function renderPeriodTable() {
+function renderPeriodTable(){
   const tb=document.getElementById('periodTable');
-  if (valuations.length<2) { tb.innerHTML='<tr><td colspan="9" class="empty">Necesitás al menos 2 valuaciones para calcular variaciones.</td></tr>'; return; }
+  if(valuations.length<2){ tb.innerHTML='<tr><td colspan="6" class="empty">Necesitás al menos 2 valuaciones para calcular variaciones.</td></tr>'; return; }
   const last=valuations[valuations.length-1], lastDate=last.date;
-  function findClosest(daysAgo) {
-    const target=new Date(lastDate); target.setDate(target.getDate()-daysAgo);
-    const tStr=target.toISOString().split('T')[0];
-    for(let i=valuations.length-2;i>=0;i--){if(valuations[i].date<=tStr)return valuations[i];}
-    return valuations[0];
-  }
+  function findClosest(d){ const t=new Date(lastDate); t.setDate(t.getDate()-d); const s=t.toISOString().split('T')[0]; for(let i=valuations.length-2;i>=0;i--){if(valuations[i].date<=s)return valuations[i];} return valuations[0]; }
   const periods=[{label:'Día anterior',days:1},{label:'Última semana',days:7},{label:'Último mes',days:30},{label:'Último año',days:365},{label:'Desde inicio',base:valuations[0]}];
   const rows=periods.map(p=>{
-    const base=p.base||findClosest(p.days); if(!base||base.date===lastDate) return null;
-    const {arsNet,usdNet}=netTransfers(base.date,lastDate);
-    const dA=last.ars-base.ars,dU=last.usd-base.usd,nA=dA-arsNet,nU=dU-usdNet;
-    const pA=(dA/base.ars)*100,pU=(dU/base.usd)*100;
-    return `<tr><td style="font-weight:600">${p.label}</td><td style="color:var(--muted)">${base.date}</td><td style="color:var(--muted)">${lastDate}</td><td class="${cls(dA)}">${fmtARS(dA)}</td><td class="${cls(pA)}">${fmtPct(pA)}</td><td class="${cls(dU)}">${fmtUSD(dU)}</td><td class="${cls(pU)}">${fmtPct(pU)}</td><td class="${cls(nA)}">${fmtARS(nA)}</td><td class="${cls(nU)}">${fmtUSD(nU)}</td></tr>`;
+    const base=p.base||findClosest(p.days); if(!base||base.date===lastDate)return null;
+    const trfNet=netTrfCur(base.date,lastDate);
+    const baseV=valCur(base), lastV=valCur(last);
+    const rend=lastV-baseV-trfNet, pct=(rend/baseV)*100;
+    return `<tr>
+      <td style="font-weight:600">${p.label}</td>
+      <td style="color:var(--muted)">${base.date}</td>
+      <td style="color:var(--muted)">${lastDate}</td>
+      <td class="${cls(rend)}">${fmtC(rend)}</td>
+      <td class="${cls(pct)}">${fmtPct(pct)}</td>
+      <td style="color:var(--muted)">${fmtC(trfNet)}</td>
+    </tr>`;
   }).filter(Boolean).join('');
-  tb.innerHTML=rows||'<tr><td colspan="9" class="empty">No hay suficientes datos para el período.</td></tr>';
+  tb.innerHTML=rows||'<tr><td colspan="6" class="empty">No hay suficientes datos.</td></tr>';
+}
+
+// ── Custom period + chart ──
+function findClosestVal(dateStr){ const exact=valuations.find(v=>v.date===dateStr); if(exact)return exact; for(let i=valuations.length-1;i>=0;i--){if(valuations[i].date<=dateStr)return valuations[i];} return null; }
+
+function calcCustomPeriod(){
+  const desde=document.getElementById('pDesde').value, hasta=document.getElementById('pHasta').value;
+  if(!desde||!hasta){ showToast('⚠ Seleccioná ambas fechas.',true); return; }
+  if(desde>=hasta){ showToast('⚠ "Desde" debe ser anterior a "Hasta".',true); return; }
+  if(!valuations.length){ showToast('⚠ Sin datos.',true); return; }
+
+  const baseVal=findClosestVal(desde), endVal=findClosestVal(hasta);
+  if(!baseVal||!endVal){ showToast('⚠ No hay valuaciones en ese rango.',true); return; }
+  if(baseVal.date===endVal.date){ showToast('⚠ Ambas fechas apuntan a la misma valuación.',true); return; }
+
+  const inRange=valuations.filter(v=>v.date>=baseVal.date && v.date<=endVal.date);
+  const baseV=valCur(baseVal);
+
+  const points=inRange.map(v=>{
+    const trfNet=netTrfCur(baseVal.date,v.date);
+    const rend=valCur(v)-baseV-trfNet;
+    return { date:v.date, rend, pct:parseFloat(((rend/baseV)*100).toFixed(4)) };
+  });
+
+  window._lastChartPoints=points;
+  window._lastBaseVal=baseVal;
+  window._lastEndVal=endVal;
+
+  const totalTrf=netTrfCur(baseVal.date,endVal.date);
+  const totalRend=valCur(endVal)-baseV-totalTrf;
+  const totalPct=(totalRend/baseV)*100;
+
+  const meta=document.getElementById('chartMeta');
+  meta.innerHTML=`
+    <div class="meta-item"><div class="meta-label">Período</div><div class="meta-val">${baseVal.date} → ${endVal.date}</div></div>
+    <div class="meta-item"><div class="meta-label">Rend. neto ${currency.toUpperCase()}</div><div class="meta-val ${cls(totalRend)}">${fmtC(totalRend)}</div></div>
+    <div class="meta-item"><div class="meta-label">Rend. neto %</div><div class="meta-val ${cls(totalPct)}">${fmtPct(totalPct)}</div></div>
+    <div class="meta-item"><div class="meta-label">Transf. netas</div><div class="meta-val">${fmtC(totalTrf)}</div></div>
+  `;
+
+  document.getElementById('chartContainer').classList.add('visible');
+  drawChart(points);
+}
+
+function setChartMode(m){
+  chartMode=m;
+  document.getElementById('modeBtn1').className='mode-btn'+(m==='pct'?' active':'');
+  document.getElementById('modeBtn2').className='mode-btn'+(m==='cap'?' active':'');
+  if(window._lastChartPoints) drawChart(window._lastChartPoints);
+}
+
+function drawChart(points){
+  if(!points||points.length<2)return;
+  const labels=points.map(p=>p.date);
+  const data=points.map(p=>chartMode==='pct'?p.pct:parseFloat(p.rend.toFixed(2)));
+
+  const vals=data.filter(v=>isFinite(v));
+  const minY=Math.min(...vals), maxY=Math.max(...vals);
+  const pad=Math.max(Math.abs(maxY),Math.abs(minY))*0.15||1;
+  const symBound=Math.max(Math.abs(minY)-pad<0?Math.abs(minY)+pad:Math.abs(minY)+pad, Math.abs(maxY)+pad);
+
+  const isARS=currency==='ars';
+  const yFmt=chartMode==='pct'
+    ? v=>(v>=0?'+':'')+v.toFixed(1)+'%'
+    : v=>isARS
+      ? (v<0?'-$':'$')+Math.abs(Math.round(v/1000)).toLocaleString('es-AR')+'k'
+      : (v<0?'-U$S ':'U$S ')+Math.abs(Math.round(v)).toLocaleString('en-US');
+
+  const tooltipFmt=chartMode==='pct'
+    ? v=>(v>=0?'+':'')+v.toFixed(2)+'%'
+    : v=>isARS
+      ? (v<0?'-$ ':'$ ')+Math.abs(Math.round(v)).toLocaleString('es-AR')
+      : (v<0?'-USD ':'USD ')+Math.abs(v).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+
+  document.getElementById('chartLegendMode').textContent=chartMode==='pct'
+    ?'% acumulado neto desde inicio del período'
+    :'Ganancia de capital neta desde inicio del período ('+currency.toUpperCase()+')';
+
+  const cfg={
+    type:'line',
+    data:{
+      labels,
+      datasets:[{
+        label:'Rendimiento neto',
+        data,
+        borderColor:'#10b981',
+        borderWidth:2,
+        pointRadius:labels.length>60?0:3,
+        pointHoverRadius:5,
+        pointBackgroundColor:'#10b981',
+        fill:{target:{value:0},above:'rgba(16,185,129,0.12)',below:'rgba(244,63,94,0.10)'},
+        tension:0.3
+      }]
+    },
+    options:{
+      responsive:true,
+      maintainAspectRatio:false,
+      interaction:{mode:'index',intersect:false},
+      plugins:{
+        legend:{display:false},
+        tooltip:{
+          backgroundColor:'#111827',
+          borderColor:'#1f2d45',
+          borderWidth:1,
+          titleColor:'#e2e8f0',
+          bodyColor:'#e2e8f0',
+          titleFont:{family:'Space Mono, monospace',size:11},
+          bodyFont:{family:'Space Mono, monospace',size:11},
+          callbacks:{label:ctx=>' '+tooltipFmt(ctx.parsed.y)}
+        }
+      },
+      scales:{
+        x:{
+          grid:{color:'rgba(255,255,255,0.04)'},
+          ticks:{color:'#64748b',font:{size:10,family:'Space Mono, monospace'},maxTicksLimit:8,autoSkip:true}
+        },
+        y:{
+          min:-symBound,
+          max:symBound,
+          grid:{
+            color:ctx=>ctx.tick.value===0?'rgba(255,255,255,0.2)':'rgba(255,255,255,0.04)',
+            lineWidth:ctx=>ctx.tick.value===0?2:1
+          },
+          ticks:{color:'#64748b',font:{size:10,family:'Space Mono, monospace'},callback:yFmt,maxTicksLimit:9}
+        }
+      }
+    }
+  };
+
+  if(chartInst){chartInst.destroy();}
+  chartInst=new Chart(document.getElementById('perfChart'),cfg);
+}
+
+function clearCustom(){
+  document.getElementById('chartContainer').classList.remove('visible');
+  document.getElementById('pDesde').value='';
+  document.getElementById('pHasta').value=new Date().toISOString().split('T')[0];
+  window._lastChartPoints=null;
+  if(chartInst){chartInst.destroy();chartInst=null;}
 }
 
 // ── Init ──
 setDefaultDates();
 loadAll();
 </script>
-
-
-</body></html>
+</body>
+</html>
