@@ -1,0 +1,1122 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cocos · Portfolio Tracker</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0e1a;
+    --surface: #111827;
+    --surface2: #1a2235;
+    --border: #1f2d45;
+    --accent: #00d4aa;
+    --accent2: #3b82f6;
+    --red: #f43f5e;
+    --green: #10b981;
+    --text: #e2e8f0;
+    --muted: #64748b;
+    --gold: #f59e0b;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,212,170,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,212,170,0.03) 1px, transparent 1px);
+    background-size: 48px 48px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 2.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .logo {
+    font-family: 'Space Mono', monospace;
+    font-size: 1.1rem;
+    color: var(--accent);
+    letter-spacing: -0.02em;
+  }
+  .logo span { color: var(--muted); }
+
+  .header-date {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+
+  .summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .card:hover { border-color: var(--accent); }
+  .card::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), transparent);
+  }
+  .card.blue::after { background: linear-gradient(90deg, var(--accent2), transparent); }
+  .card.red::after  { background: linear-gradient(90deg, var(--red), transparent); }
+  .card.gold::after { background: linear-gradient(90deg, var(--gold), transparent); }
+
+  .card-label {
+    font-size: 0.7rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    margin-bottom: 0.5rem;
+  }
+  .card-value {
+    font-family: 'Space Mono', monospace;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.1;
+  }
+  .card-sub {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-top: 0.3rem;
+  }
+
+  .var-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+  }
+  .var-chip {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.5rem 0.9rem;
+    min-width: 90px;
+  }
+  .var-chip-label {
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    margin-bottom: 0.2rem;
+  }
+  .var-chip-val {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.85rem;
+    font-weight: 700;
+  }
+
+  .section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+  }
+  .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    user-select: none;
+  }
+  .section-title {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  .section-title .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 6px var(--accent);
+  }
+  .section-title .dot.blue  { background: var(--accent2); box-shadow: 0 0 6px var(--accent2); }
+  .section-title .dot.red   { background: var(--red);     box-shadow: 0 0 6px var(--red); }
+  .section-title .dot.gold  { background: var(--gold);    box-shadow: 0 0 6px var(--gold); }
+
+  .toggle-icon { color: var(--muted); font-size: 0.8rem; }
+  .section-body { padding: 1.5rem; }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem;
+    align-items: end;
+  }
+  .field { display: flex; flex-direction: column; gap: 0.4rem; }
+
+  label {
+    font-size: 0.7rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+  }
+
+  input, select {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.85rem;
+    padding: 0.6rem 0.8rem;
+    outline: none;
+    transition: border-color 0.2s;
+    width: 100%;
+  }
+  input:focus, select:focus { border-color: var(--accent); }
+  input::placeholder { color: var(--muted); }
+
+  .required-tag { font-size: 0.6rem; color: var(--red); font-weight: 600; }
+
+  .btn {
+    background: var(--accent);
+    color: #0a0e1a;
+    border: none;
+    border-radius: 8px;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.65rem 1.25rem;
+    cursor: pointer;
+    letter-spacing: 0.05em;
+    transition: opacity 0.15s, transform 0.1s;
+    white-space: nowrap;
+  }
+  .btn:hover  { opacity: 0.85; transform: translateY(-1px); }
+  .btn:active { transform: translateY(0); }
+  .btn.secondary { background: var(--surface2); border: 1px solid var(--border); color: var(--text); }
+  .btn.secondary:hover { border-color: var(--accent); }
+  .btn.danger { background: var(--red); color: #fff; }
+  .btn.outline { background: transparent; border: 1px solid var(--accent); color: var(--accent); }
+  .btn.gold-btn { background: var(--gold); color: #0a0e1a; }
+
+  .hint {
+    font-size: 0.72rem;
+    color: var(--muted);
+    margin-top: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    background: rgba(0,212,170,0.04);
+    border-left: 2px solid var(--accent);
+    border-radius: 0 4px 4px 0;
+  }
+
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+  thead th {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    padding: 0.6rem 0.8rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  tbody tr { border-bottom: 1px solid rgba(31,45,69,0.5); transition: background 0.15s; }
+  tbody tr:hover { background: rgba(0,212,170,0.04); }
+  tbody td { padding: 0.65rem 0.8rem; font-family: 'Space Mono', monospace; font-size: 0.78rem; vertical-align: middle; }
+
+  .icon-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 0.85rem;
+    padding: 0.25rem 0.4rem;
+    border-radius: 4px;
+    transition: color 0.15s, background 0.15s;
+    color: var(--muted);
+  }
+  .icon-btn:hover.edit { color: var(--accent2); background: rgba(59,130,246,0.1); }
+  .icon-btn:hover.del  { color: var(--red);     background: rgba(244,63,94,0.1); }
+
+  .up      { color: var(--green); }
+  .down    { color: var(--red); }
+  .neutral { color: var(--muted); }
+
+  .empty { text-align: center; color: var(--muted); font-size: 0.8rem; padding: 2rem; font-family: 'Space Mono', monospace; }
+
+  /* ── Custom period builder ── */
+  .period-builder {
+    display: grid;
+    grid-template-columns: 1fr 1fr auto auto;
+    gap: 0.75rem;
+    align-items: end;
+    margin-bottom: 1.25rem;
+  }
+
+  .custom-result {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    margin-top: 1rem;
+    display: none;
+  }
+  .custom-result.visible { display: block; }
+  .custom-result-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 0.75rem;
+    margin-top: 0.75rem;
+  }
+  .cr-item { display: flex; flex-direction: column; gap: 0.2rem; }
+  .cr-label { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
+  .cr-val { font-family: 'Space Mono', monospace; font-size: 0.9rem; font-weight: 700; }
+
+  /* ── Modal ── */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(4px);
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+  }
+  .modal-overlay.open { opacity: 1; pointer-events: all; }
+
+  .modal {
+    background: var(--surface);
+    border: 1px solid var(--accent);
+    border-radius: 14px;
+    padding: 1.75rem;
+    width: 90%;
+    max-width: 520px;
+    position: relative;
+    transform: translateY(16px);
+    transition: transform 0.2s;
+    box-shadow: 0 0 40px rgba(0,212,170,0.12);
+  }
+  .modal-overlay.open .modal { transform: translateY(0); }
+
+  .modal-title {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    color: var(--accent);
+    margin-bottom: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .modal-close {
+    position: absolute;
+    top: 1rem; right: 1rem;
+    background: none; border: none;
+    color: var(--muted); font-size: 1.1rem;
+    cursor: pointer; padding: 0.2rem 0.4rem;
+    border-radius: 4px;
+    transition: color 0.15s;
+  }
+  .modal-close:hover { color: var(--text); }
+
+  .modal-actions { display: flex; gap: 0.75rem; margin-top: 1.25rem; justify-content: flex-end; }
+
+  /* Toast */
+  #toast {
+    position: fixed;
+    bottom: 1.5rem; right: 1.5rem;
+    background: var(--surface);
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    padding: 0.7rem 1.1rem;
+    border-radius: 8px;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.3s, transform 0.3s;
+    pointer-events: none;
+    z-index: 300;
+  }
+  #toast.show { opacity: 1; transform: translateY(0); }
+
+  .disclaimer {
+    font-size: 0.65rem;
+    color: var(--muted);
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-bottom: 0;
+    border-top: 1px solid var(--border);
+    line-height: 1.6;
+    text-align: center;
+  }
+
+  @media (max-width: 600px) {
+    .summary-grid { grid-template-columns: 1fr 1fr; }
+    .form-grid    { grid-template-columns: 1fr; }
+    .period-builder { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <div class="logo">COCOS <span>//</span> PORTFOLIO TRACKER</div>
+    <div class="header-date" id="headerDate"></div>
+  </header>
+
+  <!-- Summary Cards -->
+  <div class="summary-grid">
+    <div class="card">
+      <div class="card-label">Valor actual · ARS</div>
+      <div class="card-value" id="summARS">—</div>
+      <div class="card-sub" id="summARSdate">sin datos</div>
+    </div>
+    <div class="card blue">
+      <div class="card-label">Valor actual · USD</div>
+      <div class="card-value" id="summUSD">—</div>
+      <div class="card-sub" id="summUSDdate">sin datos</div>
+    </div>
+    <div class="card gold">
+      <div class="card-label">Rendimiento neto · ARS</div>
+      <div class="card-value" id="summRetARS">—</div>
+      <div class="card-sub">excl. transferencias</div>
+    </div>
+    <div class="card gold">
+      <div class="card-label">Rendimiento neto · USD</div>
+      <div class="card-value" id="summRetUSD">—</div>
+      <div class="card-sub">excl. transferencias</div>
+    </div>
+  </div>
+
+  <!-- Var chips -->
+  <div class="var-chips" id="varChips"></div>
+
+  <!-- ── 1. Cargar valuación ── -->
+  <div class="section">
+    <div class="section-header" onclick="toggle('sec1')">
+      <div class="section-title"><span class="dot"></span> Cargar valor de cartera</div>
+      <span class="toggle-icon" id="ico1">▼</span>
+    </div>
+    <div class="section-body" id="sec1">
+      <div class="form-grid">
+        <div class="field">
+          <label>Fecha <span class="required-tag">*</span></label>
+          <input type="date" id="vFecha">
+        </div>
+        <div class="field">
+          <label>Valor en ARS <span class="required-tag">*</span></label>
+          <input type="number" id="vARS" placeholder="0.00" min="0" step="0.01">
+        </div>
+        <div class="field">
+          <label>Valor en USD <span class="required-tag">*</span></label>
+          <input type="number" id="vUSD" placeholder="0.00" min="0" step="0.01">
+        </div>
+        <div class="field">
+          <label>&nbsp;</label>
+          <button class="btn" onclick="addValuation()">+ Registrar</button>
+        </div>
+      </div>
+      <div class="hint">Ingresá el valor de cierre de tu cartera en ambas monedas. Si cargás la misma fecha dos veces, sobreescribe el valor anterior.</div>
+    </div>
+  </div>
+
+  <!-- ── 2. Transferencias ── -->
+  <div class="section">
+    <div class="section-header" onclick="toggle('sec2')">
+      <div class="section-title"><span class="dot blue"></span> Transferencias entrantes / salientes</div>
+      <span class="toggle-icon" id="ico2">▼</span>
+    </div>
+    <div class="section-body" id="sec2">
+      <div class="form-grid">
+        <div class="field">
+          <label>Fecha <span class="required-tag">*</span></label>
+          <input type="date" id="tFecha">
+        </div>
+        <div class="field">
+          <label>Tipo <span class="required-tag">*</span></label>
+          <select id="tTipo">
+            <option value="in">↑ Ingreso</option>
+            <option value="out">↓ Retiro</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Monto ARS <span class="required-tag">*</span></label>
+          <input type="number" id="tARS" placeholder="0.00" min="0" step="0.01">
+        </div>
+        <div class="field">
+          <label>Monto USD <span class="required-tag">*</span></label>
+          <input type="number" id="tUSD" placeholder="0.00" min="0" step="0.01">
+        </div>
+        <div class="field">
+          <label>Descripción</label>
+          <input type="text" id="tDesc" placeholder="ej: depósito banco">
+        </div>
+        <div class="field">
+          <label>&nbsp;</label>
+          <button class="btn" onclick="addTransfer()">+ Registrar</button>
+        </div>
+      </div>
+      <div class="hint">Ingresá el monto equivalente en <strong>ambas monedas</strong>. Ambos campos son obligatorios para netear correctamente el rendimiento.</div>
+      <div class="table-wrap" style="margin-top:1.25rem">
+        <table>
+          <thead>
+            <tr><th>Fecha</th><th>Tipo</th><th>ARS</th><th>USD</th><th>Descripción</th><th>Acciones</th></tr>
+          </thead>
+          <tbody id="transferTable"><tr><td colspan="6" class="empty">Sin transferencias registradas.</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 3. Histórico ── -->
+  <div class="section">
+    <div class="section-header" onclick="toggle('sec3')">
+      <div class="section-title"><span class="dot red"></span> Histórico de valuaciones</div>
+      <span class="toggle-icon" id="ico3">▼</span>
+    </div>
+    <div class="section-body" id="sec3">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>ARS</th><th>Δ ARS</th>
+              <th>USD</th><th>Δ USD</th>
+              <th>Transf. ARS</th><th>Transf. USD</th>
+              <th>Rend. neto ARS</th><th>Rend. neto USD</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="histTable"><tr><td colspan="10" class="empty">Sin valuaciones registradas.</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 4. Variaciones por período ── -->
+  <div class="section">
+    <div class="section-header" onclick="toggle('sec4')">
+      <div class="section-title"><span class="dot gold"></span> Variaciones por período</div>
+      <span class="toggle-icon" id="ico4">▼</span>
+    </div>
+    <div class="section-body" id="sec4">
+
+      <!-- Períodos predefinidos -->
+      <div class="table-wrap" style="margin-bottom:1.5rem">
+        <table>
+          <thead>
+            <tr>
+              <th>Período</th><th>Desde</th><th>Hasta</th>
+              <th>Var. ARS</th><th>% ARS</th>
+              <th>Var. USD</th><th>% USD</th>
+              <th>Rend. neto ARS</th><th>Rend. neto USD</th>
+            </tr>
+          </thead>
+          <tbody id="periodTable"><tr><td colspan="9" class="empty">Necesitás al menos 2 valuaciones para calcular variaciones.</td></tr></tbody>
+        </table>
+      </div>
+
+      <!-- Período personalizado -->
+      <div style="border-top: 1px solid var(--border); padding-top:1.25rem;">
+        <div style="font-family:'Space Mono',monospace;font-size:0.72rem;color:var(--accent);letter-spacing:0.06em;margin-bottom:0.85rem;">▸ PERÍODO PERSONALIZADO</div>
+        <div class="period-builder">
+          <div class="field">
+            <label>Desde <span class="required-tag">*</span></label>
+            <input type="date" id="pDesde">
+          </div>
+          <div class="field">
+            <label>Hasta <span class="required-tag">*</span></label>
+            <input type="date" id="pHasta">
+          </div>
+          <div class="field">
+            <label>&nbsp;</label>
+            <button class="btn gold-btn" onclick="calcCustomPeriod()">Calcular</button>
+          </div>
+          <div class="field">
+            <label>&nbsp;</label>
+            <button class="btn secondary" onclick="clearCustomPeriod()">Limpiar</button>
+          </div>
+        </div>
+        <div class="custom-result" id="customResult">
+          <div style="font-family:'Space Mono',monospace;font-size:0.72rem;color:var(--muted);margin-bottom:0.25rem;" id="customResultTitle"></div>
+          <div class="custom-result-grid" id="customResultGrid"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="disclaimer">
+    Documento para uso interno/informativo únicamente. No constituye una oferta de compra o venta de valores negociables.<br>
+    Cocos Capital S.A. Agente de Liquidación y Compensación Propio No. 688.
+  </div>
+</div>
+
+<!-- ── Modal Edición Valuación ── -->
+<div class="modal-overlay" id="editValModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('editValModal')">✕</button>
+    <div class="modal-title">✎ Editar valuación</div>
+    <input type="hidden" id="editValOrigDate">
+    <div class="form-grid" style="grid-template-columns:1fr 1fr 1fr;">
+      <div class="field">
+        <label>Fecha</label>
+        <input type="date" id="editValFecha">
+      </div>
+      <div class="field">
+        <label>ARS</label>
+        <input type="number" id="editValARS" placeholder="0.00" step="0.01" min="0">
+      </div>
+      <div class="field">
+        <label>USD</label>
+        <input type="number" id="editValUSD" placeholder="0.00" step="0.01" min="0">
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn secondary" onclick="closeModal('editValModal')">Cancelar</button>
+      <button class="btn" onclick="saveEditVal()">Guardar cambios</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── Modal Edición Transferencia ── -->
+<div class="modal-overlay" id="editTrfModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('editTrfModal')">✕</button>
+    <div class="modal-title">✎ Editar transferencia</div>
+    <input type="hidden" id="editTrfId">
+    <div class="form-grid" style="grid-template-columns:1fr 1fr;">
+      <div class="field">
+        <label>Fecha</label>
+        <input type="date" id="editTrfFecha">
+      </div>
+      <div class="field">
+        <label>Tipo</label>
+        <select id="editTrfTipo">
+          <option value="in">↑ Ingreso</option>
+          <option value="out">↓ Retiro</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>ARS</label>
+        <input type="number" id="editTrfARS" placeholder="0.00" step="0.01" min="0">
+      </div>
+      <div class="field">
+        <label>USD</label>
+        <input type="number" id="editTrfUSD" placeholder="0.00" step="0.01" min="0">
+      </div>
+      <div class="field" style="grid-column:1/-1;">
+        <label>Descripción</label>
+        <input type="text" id="editTrfDesc" placeholder="opcional">
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn secondary" onclick="closeModal('editTrfModal')">Cancelar</button>
+      <button class="btn" onclick="saveEditTrf()">Guardar cambios</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+const KEY_VAL = 'cct_valuations';
+const KEY_TRF = 'cct_transfers';
+
+function load(k) { try { return JSON.parse(localStorage.getItem(k)) || []; } catch { return []; } }
+function save(k, d) { localStorage.setItem(k, JSON.stringify(d)); }
+
+let valuations = load(KEY_VAL);
+let transfers  = load(KEY_TRF);
+
+// ── Formatters ──
+function fmtARS(n) { return '$ ' + Number(n).toLocaleString('es-AR', { minimumFractionDigits:2, maximumFractionDigits:2 }); }
+function fmtUSD(n) { return 'USD ' + Number(n).toLocaleString('en-US', { minimumFractionDigits:2, maximumFractionDigits:2 }); }
+function fmtPct(n) { const s = n > 0 ? '+' : ''; return s + n.toFixed(2) + '%'; }
+function cls(n) { return n > 0 ? 'up' : n < 0 ? 'down' : 'neutral'; }
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2600);
+}
+
+function toggle(id) {
+  const el  = document.getElementById(id);
+  const num = id.slice(-1);
+  const ico = document.getElementById('ico' + num);
+  const vis = el.style.display !== 'none';
+  el.style.display = vis ? 'none' : '';
+  ico.textContent = vis ? '▶' : '▼';
+}
+
+// ── Modal helpers ──
+function openModal(id)  { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+// Close modal on overlay click
+document.querySelectorAll('.modal-overlay').forEach(ov => {
+  ov.addEventListener('click', e => { if (e.target === ov) ov.classList.remove('open'); });
+});
+
+// ── Default dates ──
+function setDefaultDates() {
+  const today = new Date().toISOString().split('T')[0];
+  ['vFecha','tFecha'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el && !el.value) el.value = today;
+  });
+  document.getElementById('pHasta').value = today;
+  document.getElementById('headerDate').textContent =
+    new Date().toLocaleDateString('es-AR', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+}
+
+// ── Add valuation ──
+function addValuation() {
+  const fecha = document.getElementById('vFecha').value;
+  const ars   = parseFloat(document.getElementById('vARS').value);
+  const usd   = parseFloat(document.getElementById('vUSD').value);
+  if (!fecha || isNaN(ars) || isNaN(usd) || ars < 0 || usd < 0) {
+    showToast('⚠ Completá todos los campos correctamente.'); return;
+  }
+  const idx = valuations.findIndex(v => v.date === fecha);
+  if (idx >= 0) valuations[idx] = { date:fecha, ars, usd };
+  else          valuations.push({ date:fecha, ars, usd });
+  valuations.sort((a,b) => a.date.localeCompare(b.date));
+  save(KEY_VAL, valuations);
+  document.getElementById('vARS').value = '';
+  document.getElementById('vUSD').value = '';
+  showToast('✓ Valuación registrada.');
+  render();
+}
+
+// ── Edit valuation (open modal) ──
+function editValuation(date) {
+  const v = valuations.find(x => x.date === date);
+  if (!v) return;
+  document.getElementById('editValOrigDate').value = date;
+  document.getElementById('editValFecha').value    = date;
+  document.getElementById('editValARS').value      = v.ars;
+  document.getElementById('editValUSD').value      = v.usd;
+  openModal('editValModal');
+}
+
+function saveEditVal() {
+  const origDate = document.getElementById('editValOrigDate').value;
+  const newDate  = document.getElementById('editValFecha').value;
+  const ars      = parseFloat(document.getElementById('editValARS').value);
+  const usd      = parseFloat(document.getElementById('editValUSD').value);
+  if (!newDate || isNaN(ars) || isNaN(usd) || ars < 0 || usd < 0) {
+    showToast('⚠ Completá todos los campos.'); return;
+  }
+  // Remove old
+  valuations = valuations.filter(v => v.date !== origDate);
+  // If new date conflicts with another record (different from original), overwrite
+  valuations = valuations.filter(v => v.date !== newDate);
+  valuations.push({ date:newDate, ars, usd });
+  valuations.sort((a,b) => a.date.localeCompare(b.date));
+  save(KEY_VAL, valuations);
+  closeModal('editValModal');
+  showToast('✓ Valuación actualizada.');
+  render();
+}
+
+function delValuation(date) {
+  if (!confirm('¿Eliminar la valuación del ' + date + '?')) return;
+  valuations = valuations.filter(v => v.date !== date);
+  save(KEY_VAL, valuations);
+  showToast('Valuación eliminada.');
+  render();
+}
+
+// ── Add transfer ──
+function addTransfer() {
+  const fecha = document.getElementById('tFecha').value;
+  const tipo  = document.getElementById('tTipo').value;
+  const ars   = parseFloat(document.getElementById('tARS').value);
+  const usd   = parseFloat(document.getElementById('tUSD').value);
+  const desc  = document.getElementById('tDesc').value.trim();
+  if (!fecha || isNaN(ars) || isNaN(usd) || ars < 0 || usd < 0) {
+    showToast('⚠ Completá fecha y ambos montos.'); return;
+  }
+  transfers.push({ id: Date.now(), date:fecha, type:tipo, ars, usd, desc });
+  transfers.sort((a,b) => a.date.localeCompare(b.date));
+  save(KEY_TRF, transfers);
+  document.getElementById('tARS').value  = '';
+  document.getElementById('tUSD').value  = '';
+  document.getElementById('tDesc').value = '';
+  showToast('✓ Transferencia registrada.');
+  render();
+}
+
+// ── Edit transfer ──
+function editTransfer(id) {
+  const t = transfers.find(x => x.id === id);
+  if (!t) return;
+  document.getElementById('editTrfId').value    = id;
+  document.getElementById('editTrfFecha').value = t.date;
+  document.getElementById('editTrfTipo').value  = t.type;
+  document.getElementById('editTrfARS').value   = t.ars;
+  document.getElementById('editTrfUSD').value   = t.usd;
+  document.getElementById('editTrfDesc').value  = t.desc || '';
+  openModal('editTrfModal');
+}
+
+function saveEditTrf() {
+  const id    = parseInt(document.getElementById('editTrfId').value);
+  const fecha = document.getElementById('editTrfFecha').value;
+  const tipo  = document.getElementById('editTrfTipo').value;
+  const ars   = parseFloat(document.getElementById('editTrfARS').value);
+  const usd   = parseFloat(document.getElementById('editTrfUSD').value);
+  const desc  = document.getElementById('editTrfDesc').value.trim();
+  if (!fecha || isNaN(ars) || isNaN(usd) || ars < 0 || usd < 0) {
+    showToast('⚠ Completá fecha y ambos montos.'); return;
+  }
+  const idx = transfers.findIndex(t => t.id === id);
+  if (idx >= 0) transfers[idx] = { id, date:fecha, type:tipo, ars, usd, desc };
+  transfers.sort((a,b) => a.date.localeCompare(b.date));
+  save(KEY_TRF, transfers);
+  closeModal('editTrfModal');
+  showToast('✓ Transferencia actualizada.');
+  render();
+}
+
+function delTransfer(id) {
+  if (!confirm('¿Eliminar esta transferencia?')) return;
+  transfers = transfers.filter(t => t.id !== id);
+  save(KEY_TRF, transfers);
+  showToast('Transferencia eliminada.');
+  render();
+}
+
+// ── Transfer math ──
+function netTransfers(from, to) {
+  let arsNet = 0, usdNet = 0;
+  for (const t of transfers) {
+    if (t.date > from && t.date <= to) {
+      const sign = t.type === 'in' ? 1 : -1;
+      arsNet += sign * t.ars;
+      usdNet += sign * t.usd;
+    }
+  }
+  return { arsNet, usdNet };
+}
+
+// ── Custom period ──
+function findClosestVal(dateStr) {
+  // Exact match first
+  const exact = valuations.find(v => v.date === dateStr);
+  if (exact) return exact;
+  // Nearest equal or prior
+  for (let i = valuations.length - 1; i >= 0; i--) {
+    if (valuations[i].date <= dateStr) return valuations[i];
+  }
+  return null;
+}
+
+function calcCustomPeriod() {
+  const desde = document.getElementById('pDesde').value;
+  const hasta = document.getElementById('pHasta').value;
+  const el    = document.getElementById('customResult');
+  const grid  = document.getElementById('customResultGrid');
+  const title = document.getElementById('customResultTitle');
+
+  if (!desde || !hasta) { showToast('⚠ Seleccioná ambas fechas.'); return; }
+  if (desde >= hasta)   { showToast('⚠ "Desde" debe ser anterior a "Hasta".'); return; }
+  if (!valuations.length) { showToast('⚠ Sin datos de valuación.'); return; }
+
+  const baseVal = findClosestVal(desde);
+  const endVal  = findClosestVal(hasta);
+
+  if (!baseVal || !endVal) { showToast('⚠ No hay valuaciones en ese rango.'); return; }
+  if (baseVal.date === endVal.date) { showToast('⚠ Ambas fechas apuntan a la misma valuación.'); return; }
+
+  const { arsNet, usdNet } = netTransfers(baseVal.date, endVal.date);
+
+  const dA  = endVal.ars - baseVal.ars;
+  const dU  = endVal.usd - baseVal.usd;
+  const nA  = dA - arsNet;
+  const nU  = dU - usdNet;
+  const pA  = (dA / baseVal.ars) * 100;
+  const pU  = (dU / baseVal.usd) * 100;
+  const npA = (nA / baseVal.ars) * 100;
+  const npU = (nU / baseVal.usd) * 100;
+
+  title.textContent = `Comparando ${baseVal.date} → ${endVal.date}`;
+
+  const items = [
+    { label:'ARS inicio',        val: fmtARS(baseVal.ars),  c:'' },
+    { label:'ARS fin',           val: fmtARS(endVal.ars),   c:'' },
+    { label:'Var. bruta ARS',    val: fmtARS(dA),           c: cls(dA) },
+    { label:'% bruto ARS',       val: fmtPct(pA),           c: cls(pA) },
+    { label:'USD inicio',        val: fmtUSD(baseVal.usd),  c:'' },
+    { label:'USD fin',           val: fmtUSD(endVal.usd),   c:'' },
+    { label:'Var. bruta USD',    val: fmtUSD(dU),           c: cls(dU) },
+    { label:'% bruto USD',       val: fmtPct(pU),           c: cls(pU) },
+    { label:'Transf. netas ARS', val: fmtARS(arsNet),       c:'neutral' },
+    { label:'Transf. netas USD', val: fmtUSD(usdNet),       c:'neutral' },
+    { label:'Rend. neto ARS',    val: fmtARS(nA),           c: cls(nA) },
+    { label:'% neto ARS',        val: fmtPct(npA),          c: cls(npA) },
+    { label:'Rend. neto USD',    val: fmtUSD(nU),           c: cls(nU) },
+    { label:'% neto USD',        val: fmtPct(npU),          c: cls(npU) },
+  ];
+
+  grid.innerHTML = items.map(i => `
+    <div class="cr-item">
+      <span class="cr-label">${i.label}</span>
+      <span class="cr-val ${i.c}">${i.val}</span>
+    </div>
+  `).join('');
+
+  el.classList.add('visible');
+}
+
+function clearCustomPeriod() {
+  document.getElementById('customResult').classList.remove('visible');
+  document.getElementById('pDesde').value = '';
+  document.getElementById('pHasta').value = new Date().toISOString().split('T')[0];
+}
+
+// ── Main render ──
+function render() {
+  renderSummary();
+  renderVarChips();
+  renderTransferTable();
+  renderHistTable();
+  renderPeriodTable();
+}
+
+function renderSummary() {
+  if (!valuations.length) return;
+  const last = valuations[valuations.length - 1];
+  document.getElementById('summARS').textContent      = fmtARS(last.ars);
+  document.getElementById('summUSD').textContent      = fmtUSD(last.usd);
+  document.getElementById('summARSdate').textContent  = last.date;
+  document.getElementById('summUSDdate').textContent  = last.date;
+
+  if (valuations.length >= 2) {
+    const first = valuations[0];
+    const { arsNet, usdNet } = netTransfers(first.date, last.date);
+    const retARS = last.ars - first.ars - arsNet;
+    const retUSD = last.usd - first.usd - usdNet;
+    const el1 = document.getElementById('summRetARS');
+    const el2 = document.getElementById('summRetUSD');
+    el1.textContent = fmtARS(retARS); el1.className = 'card-value ' + cls(retARS);
+    el2.textContent = fmtUSD(retUSD); el2.className = 'card-value ' + cls(retUSD);
+  }
+}
+
+function renderVarChips() {
+  const el = document.getElementById('varChips');
+  el.innerHTML = '';
+  if (valuations.length < 2) return;
+
+  const last     = valuations[valuations.length - 1];
+  const lastDate = last.date;
+
+  function findClosest(daysAgo) {
+    const target = new Date(lastDate);
+    target.setDate(target.getDate() - daysAgo);
+    const tStr = target.toISOString().split('T')[0];
+    for (let i = valuations.length - 2; i >= 0; i--) {
+      if (valuations[i].date <= tStr) return valuations[i];
+    }
+    return valuations[0];
+  }
+
+  const periods = [
+    { label:'Diario',  days:1   },
+    { label:'Semanal', days:7   },
+    { label:'Mensual', days:30  },
+    { label:'Anual',   days:365 },
+  ];
+
+  for (const p of periods) {
+    const base = findClosest(p.days);
+    if (base.date === lastDate) continue;
+    const { arsNet, usdNet } = netTransfers(base.date, lastDate);
+    const pA = ((last.ars - base.ars - arsNet) / base.ars) * 100;
+    const pU = ((last.usd - base.usd - usdNet) / base.usd) * 100;
+    const chip = document.createElement('div');
+    chip.className = 'var-chip';
+    chip.innerHTML = `
+      <span class="var-chip-label">${p.label}</span>
+      <span class="var-chip-val ${cls(pA)}">${fmtPct(pA)} ARS</span>
+      <span class="var-chip-val ${cls(pU)}" style="font-size:0.7rem">${fmtPct(pU)} USD</span>
+    `;
+    el.appendChild(chip);
+  }
+}
+
+function renderTransferTable() {
+  const tb = document.getElementById('transferTable');
+  if (!transfers.length) {
+    tb.innerHTML = '<tr><td colspan="6" class="empty">Sin transferencias registradas.</td></tr>'; return;
+  }
+  tb.innerHTML = [...transfers].reverse().map(t => `
+    <tr>
+      <td>${t.date}</td>
+      <td>${t.type === 'in' ? '<span class="up">↑ Ingreso</span>' : '<span class="down">↓ Retiro</span>'}</td>
+      <td>${fmtARS(t.ars)}</td>
+      <td>${fmtUSD(t.usd)}</td>
+      <td style="color:var(--muted)">${t.desc || '—'}</td>
+      <td>
+        <button class="icon-btn edit" onclick="editTransfer(${t.id})" title="Editar">✎</button>
+        <button class="icon-btn del"  onclick="delTransfer(${t.id})"  title="Eliminar">✕</button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function renderHistTable() {
+  const tb = document.getElementById('histTable');
+  if (!valuations.length) {
+    tb.innerHTML = '<tr><td colspan="10" class="empty">Sin valuaciones registradas.</td></tr>'; return;
+  }
+  tb.innerHTML = [...valuations].reverse().map((v, ri) => {
+    const i    = valuations.length - 1 - ri;
+    const prev = i > 0 ? valuations[i-1] : null;
+    let deltaARS='—',deltaUSD='—',clsA='',clsU='';
+    let trfARS='—',trfUSD='—',netARS='—',netUSD='—',clsNA='',clsNU='';
+    if (prev) {
+      const { arsNet, usdNet } = netTransfers(prev.date, v.date);
+      const dA=v.ars-prev.ars, dU=v.usd-prev.usd;
+      const nA=dA-arsNet,      nU=dU-usdNet;
+      deltaARS=fmtARS(dA); clsA=cls(dA);
+      deltaUSD=fmtUSD(dU); clsU=cls(dU);
+      trfARS=fmtARS(arsNet); trfUSD=fmtUSD(usdNet);
+      netARS=fmtARS(nA); clsNA=cls(nA);
+      netUSD=fmtUSD(nU); clsNU=cls(nU);
+    }
+    return `
+      <tr>
+        <td>${v.date}</td>
+        <td>${fmtARS(v.ars)}</td>
+        <td class="${clsA}">${deltaARS}</td>
+        <td>${fmtUSD(v.usd)}</td>
+        <td class="${clsU}">${deltaUSD}</td>
+        <td style="color:var(--muted)">${trfARS}</td>
+        <td style="color:var(--muted)">${trfUSD}</td>
+        <td class="${clsNA}">${netARS}</td>
+        <td class="${clsNU}">${netUSD}</td>
+        <td>
+          <button class="icon-btn edit" onclick="editValuation('${v.date}')" title="Editar">✎</button>
+          <button class="icon-btn del"  onclick="delValuation('${v.date}')"  title="Eliminar">✕</button>
+        </td>
+      </tr>
+    `;
+  }).join('');
+}
+
+function renderPeriodTable() {
+  const tb = document.getElementById('periodTable');
+  if (valuations.length < 2) {
+    tb.innerHTML = '<tr><td colspan="9" class="empty">Necesitás al menos 2 valuaciones para calcular variaciones.</td></tr>'; return;
+  }
+  const last     = valuations[valuations.length - 1];
+  const lastDate = last.date;
+
+  function findClosest(daysAgo) {
+    const target = new Date(lastDate);
+    target.setDate(target.getDate() - daysAgo);
+    const tStr = target.toISOString().split('T')[0];
+    for (let i = valuations.length - 2; i >= 0; i--) {
+      if (valuations[i].date <= tStr) return valuations[i];
+    }
+    return valuations[0];
+  }
+
+  const periods = [
+    { label:'Día anterior',  days:1   },
+    { label:'Última semana', days:7   },
+    { label:'Último mes',    days:30  },
+    { label:'Último año',    days:365 },
+    { label:'Desde inicio',  base: valuations[0] },
+  ];
+
+  const rows = periods.map(p => {
+    const base = p.base || findClosest(p.days);
+    if (!base || base.date === lastDate) return null;
+    const { arsNet, usdNet } = netTransfers(base.date, lastDate);
+    const dA=last.ars-base.ars, dU=last.usd-base.usd;
+    const nA=dA-arsNet,         nU=dU-usdNet;
+    const pA=(dA/base.ars)*100, pU=(dU/base.usd)*100;
+    return `
+      <tr>
+        <td style="font-weight:600">${p.label}</td>
+        <td style="color:var(--muted)">${base.date}</td>
+        <td style="color:var(--muted)">${lastDate}</td>
+        <td class="${cls(dA)}">${fmtARS(dA)}</td>
+        <td class="${cls(pA)}">${fmtPct(pA)}</td>
+        <td class="${cls(dU)}">${fmtUSD(dU)}</td>
+        <td class="${cls(pU)}">${fmtPct(pU)}</td>
+        <td class="${cls(nA)}">${fmtARS(nA)}</td>
+        <td class="${cls(nU)}">${fmtUSD(nU)}</td>
+      </tr>
+    `;
+  }).filter(Boolean).join('');
+
+  tb.innerHTML = rows || '<tr><td colspan="9" class="empty">No hay suficientes datos para el período.</td></tr>';
+}
+
+// ── Init ──
+setDefaultDates();
+render();
+</script>
+</body>
+</html>
